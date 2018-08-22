@@ -22,8 +22,26 @@
 
 # pacstrap /mnt base base-devel
 
-genfstab -U /mnt >> /mnt/etc/fstab
-arch-chroot /mnt /bin/bash
-rm /etc/localtime
-ln -s /usr/share/zoneinfo/Australia/Adelaide /etc/localtime
-hwclock --systohc --utc
+#genfstab -U /mnt >> /mnt/etc/fstab
+#arch-chroot /mnt /bin/bash
+#rm /etc/localtime
+#ln -s /usr/share/zoneinfo/Australia/Adelaide /etc/localtime
+#hwclock --systohc --utc
+
+sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen
+locale-gen
+echo LANG=en_US.UTF-8 > /etc/locale.conf
+export LANG=en_US.UTF-8
+
+echo harry-arch > /etc/hostname
+systemctl enable dhcpcd.service
+
+passwd && pacman -S grub os-prober 
+
+grub-install /dev/sda
+grub-mkconfig -o /boot/grub/grub.cfg
+
+pacman -Syu
+
+exit
+
