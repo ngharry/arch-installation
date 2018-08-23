@@ -136,6 +136,10 @@ configure() {
 	echo "Fixing bug for virtualbox..."
 	patch_for_virtualbox
 	echo "Finished." 
+
+	pacman -Syu
+	echo "Full system upgraded."
+	
 	nohup exit &
 	echo "Exited."
 
