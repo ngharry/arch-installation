@@ -80,7 +80,7 @@ set_language() {
 
 set_hostname() {
 	read -p 'Enter host name: ' hostname
-	echo hostname > /etc/hostname
+	echo $hostname > /etc/hostname
 }
 
 configure_network() {
