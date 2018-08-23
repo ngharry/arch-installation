@@ -81,7 +81,6 @@ set_language() {
 set_hostname() {
 	read -p 'Enter host name: ' hostname
 	echo $hostname > /etc/hostname
-	echo $hostname
 }
 
 configure_network() {
@@ -136,17 +135,16 @@ configure() {
 	# fix bug for virtualbox only
 	echo "Fixing bug for virtualbox..."
 	patch_for_virtualbox
+	echo "Finished." 
+	nohup exit &
+	echo "Exited."
+
+	echo "Unmounting disk..."
+	unmount_disk
 	echo "Finished."
 
-	# exit
-	# echo "Exited."
-
-	# echo "Unmounting disk..."
-	# unmount_disk
-	# echo "Finished."
-
-	# echo "Rebooting..."
-	# reboot
+	echo "Rebooting..."
+	reboot
 }
 
 if [ "$1" == "setup" ]
