@@ -102,6 +102,11 @@ patch_for_virtualbox() {
 	cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 }
 
+unmount_disk() {
+	umount /mnt/boot
+	umount /mnt
+}
+
 configure() {
 	echo "Setting timezone..."
 	set_timezone
@@ -132,7 +137,15 @@ configure() {
 	patch_for_virtualbox
 	echo "Finished."
 
+	exit
+	echo "Exited."
 
+	echo "Unmounting disk..."
+	unmount_disk
+	echo "Finished."
+
+	echo "Rebooting..."
+	reboot
 }
 
 if [ "$1" == "setup" ]
