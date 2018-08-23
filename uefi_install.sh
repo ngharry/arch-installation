@@ -18,6 +18,7 @@ partion() {
 		mkpart primary ext4 $(($swap_size + $fat_size + 3))MiB 100%
 }
 
+partion 512 2000
 # format_partion() {
 # 	mkfs.fat -F32 /dev/sda1
 # 	mkfs.ext4 /dev/sda3
