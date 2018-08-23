@@ -1,5 +1,5 @@
-TIMEZONE='Australia/Adelaide'
-LANGUAGE='en_US.UTF-8'
+TIMEZONE=Australia/Adelaide
+LANGUAGE=en_US.UTF-8
 
 partion() {
 	parted /dev/sda \
