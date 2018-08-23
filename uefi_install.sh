@@ -126,7 +126,7 @@ configure() {
 
 	echo "Setting host name..."
 	set_hostname
-	echo "Finished."
+	echo "Changed hostname successfully."
 
 	echo "Configuring network..."
 	configure_network
@@ -134,11 +134,9 @@ configure() {
 
 	echo "Setting root password..."
 	set_root_password
-	echo "Finished."
 
 	echo "Preparing to install bootloader..."
 	install_bootloader
-	echo "Finished."
 
 	# fix bug for virtualbox only
 	echo "Fixing bug for virtualbox..."
@@ -150,20 +148,18 @@ configure() {
 }
 
 configure
-
-rm /mnt/configure.sh
+rm configure.sh
 exit
 EOF
 	change_root configure.sh
 
 	if [ -f /mnt/configure.sh ]
     then
-        echo 'ERROR: Something failed inside the chroot, not unmounting filesystems so you can investigate.'
-        echo 'Make sure you unmount everything before you try to run this script again.'
+        echo 'ERROR: Something failed inside the chroot. Try again.'
     else
         echo 'Unmounting filesystems'
         unmount_disk
-        echo 'Done! Reboot system.'
+        echo 'Finished. You should reboot system for applying changes.'
     fi
 }
 
