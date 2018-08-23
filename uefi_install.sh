@@ -143,8 +143,13 @@ configure() {
 	unmount_disk
 	echo "Finished."
 
-	echo "Rebooting..."
-	reboot
+	read -p 'Do you want to reboot? (Y/N): ' option
+	if [ "$option" == "Y" ]
+	then 
+		reboot
+	else 
+		echo "Finished installation. You can reboot later."
+	fi
 }
 
 if [ "$1" == "setup" ]
