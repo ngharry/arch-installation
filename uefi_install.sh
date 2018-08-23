@@ -139,5 +139,5 @@ if [ "$1" == "setup" ]
 then 
 	setup
 else
-	echo "Configuration has not been written."
+	configure
 fi
