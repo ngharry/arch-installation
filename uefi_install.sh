@@ -14,7 +14,7 @@ partion() {
 		mklabel gpt \
 		mkpart ESP fat32 1MiB $(($fat_size + 1))MiB \
 		set 1 boot on \
-		mkpart primary linux-swap $(($fat_size + 2) $(($swap_size + $fat_size + 2))MiB \
+		mkpart primary linux-swap $(($fat_size + 2))MiB $(($swap_size + $fat_size + 2))MiB \
 		mkpart primary ext4 $(($swap_size + $fat_size + 3))MiB 100%
 }
 
