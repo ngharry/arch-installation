@@ -110,8 +110,11 @@ configure() {
 
 	fullsys_update
 	echo "Full system updated."
+	
 	exit
 	echo "Exited."
+
+	reboot
 }
 if [ "$1" == "setup" ]
 then
