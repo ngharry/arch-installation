@@ -1,5 +1,3 @@
-
-
 partion() {
 	parted /dev/sda \
 		mklabel gpt \
@@ -31,7 +29,12 @@ generate_fstab() {
 }
 
 change_root() {
-	arch-chroot /mnt /bin/bash
+	arch-chroot /mnt $1
+}
+
+unmount_disk() {
+	umount /mnt/boot
+	umount /mnt
 }
 
 setup() {
@@ -55,7 +58,7 @@ setup() {
 	generate_fstab
 	echo "Finished."
 
-	cat > /mnt/part2.sh <<EOF
+	cat > /mnt/configure.sh <<EOF
 TIMEZONE=Australia/Adelaide
 LANGUAGE=en_US.UTF-8
 
@@ -101,11 +104,6 @@ patch_for_virtualbox() {
 	cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 }
 
-unmount_disk() {
-	umount /mnt/boot
-	umount /mnt
-}
-
 configure() {
 	echo "Setting timezone..."
 	set_timezone
@@ -140,24 +138,17 @@ configure() {
 	echo "Full system upgraded."
 }
 
+configure
 exit
 EOF
-	chmod 755 /mnt/part2.sh
-	arch-chroot /mnt ./part2.sh
+	chmod +x /mnt/configure.sh
+	# arch-chroot /mnt ./configure.sh
+	change_root ./configure.sh
+	
+	echo "Unmounting disk..."
+	unmount_disk
+	echo "Finished."
 }
 
 setup
 
-# if [ "$1" == "setup" ]
-# then 
-# 	setup
-# elif [ "$1" == "configure" ]
-# then 
-# 	configure
-# # After configuring, type `exit`
-# elif [ "$1" == "unmount" ]
-# then
-# 	echo "Unmounting disk..."
-# 	unmount_disk
-# 	echo "Finished."
-# fi
