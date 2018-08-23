@@ -101,14 +101,8 @@ set_root_password() {
 install_bootloader() {
 	pacman -S grub efibootmgr
 	grub-install --target=x86_64-efi --efi-directory=/boot
-	if [ $? -ne 0 ]; then
-		exit
-	fi
 	
 	grub-mkconfig -o /boot/grub/grub.cfg
-	if [ $? -ne 0 ]; then
-		exit
-	fi
 }
 
 patch_for_virtualbox() {
