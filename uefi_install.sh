@@ -1,5 +1,4 @@
-TIMEZONE=Australia/Adelaide
-LANGUAGE=en_US.UTF-8
+
 
 partion() {
 	parted /dev/sda \
@@ -56,8 +55,9 @@ setup() {
 	generate_fstab
 	echo "Finished."
 
-	change_root && echo "Changed root for moving to actual installation."
-}
+	cat > /mnt/root/part2.sh <<EOF
+TIMEZONE=Australia/Adelaide
+LANGUAGE=en_US.UTF-8
 
 set_timezone() {
 	if [ -f /etc/localtime ]
@@ -140,16 +140,23 @@ configure() {
 	echo "Full system upgraded."
 }
 
-if [ "$1" == "setup" ]
-then 
-	setup
-elif [ "$1" == "configure" ]
-then 
-	configure
-# After configuring, type `exit`
-elif [ "$1" == "unmount" ]
-then
-	echo "Unmounting disk..."
-	unmount_disk
-	echo "Finished."
-fi
+exit
+EOF
+	arch-chroot /mnt /root/part2.sh
+}
+
+setup
+
+# if [ "$1" == "setup" ]
+# then 
+# 	setup
+# elif [ "$1" == "configure" ]
+# then 
+# 	configure
+# # After configuring, type `exit`
+# elif [ "$1" == "unmount" ]
+# then
+# 	echo "Unmounting disk..."
+# 	unmount_disk
+# 	echo "Finished."
+# fi
