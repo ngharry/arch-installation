@@ -1,7 +1,3 @@
-TIMEZONE='Australia/Adelaide'
-LANGUAGE=en_US.UTF-8
-PASSWORD='*'
-
 setup() {
 	echo "Partioning..."
 	partion
@@ -17,30 +13,11 @@ setup() {
 	
 	pacstrap /mnt base base-devel
 	genfstab -U /mnt >> /mnt/etc/fstab
-	arch-chroot /mnt /bin/bash
-}
 
-partion() {
-	parted /dev/sda \
-    		mklabel msdos \
-        	mkpart primary ext4 1MiB 20G \
-        	set 1 boot on \
-        	mkpart primary linux-swap 20G 22G \
-			mkpart primary ext4 22G 100%
-}
-
-format_fs() {
-	mkfs.ext4 /dev/sda1
-	mkfs.ext4 /dev/sda3
-	mkswap /dev/sda2
-	swapon /dev/sda2
-}
-
-mount_disk() {
-	mount /dev/sda1 /mnt
-	mkdir /mnt/home
-	mount /dev/sda3 /mnt/home
-}
+	cat > /mnt/root/part2.sh <<EOF
+TIMEZONE='Australia/Adelaide'
+LANGUAGE=en_US.UTF-8
+PASSWORD='*'
 
 time_setup() {
 	if [ -f /etc/localtime ]
@@ -113,10 +90,37 @@ configure() {
 	echo "Full system updated." \
 	
 	exit
-	echo "Exited." \
-
-	reboot
 }
+EOF
+	chmod 755 /mnt/root/part2.sh
+	arch-chroot /mnt /root/part2.sh
+}
+
+
+
+partion() {
+	parted /dev/sda \
+    		mklabel msdos \
+        	mkpart primary ext4 1MiB 20G \
+        	set 1 boot on \
+        	mkpart primary linux-swap 20G 22G \
+			mkpart primary ext4 22G 100%
+}
+
+format_fs() {
+	mkfs.ext4 /dev/sda1
+	mkfs.ext4 /dev/sda3
+	mkswap /dev/sda2
+	swapon /dev/sda2
+}
+
+mount_disk() {
+	mount /dev/sda1 /mnt
+	mkdir /mnt/home
+	mount /dev/sda3 /mnt/home
+}
+
+
 if [ "$1" == "setup" ]
 then
 	setup
@@ -124,3 +128,12 @@ else
 	configure
 fi
 
+pacman -S sudo
+
+read -p 'Username: ' username
+useradd -m -G wheel $username
+passwd $username
+export EDITOR=nano&&visudo
+#Add harry ALL=(ALL) ALL below root ALL=(ALL) ALL
+logout
+sudo pacman -S ggc make wget tar 
