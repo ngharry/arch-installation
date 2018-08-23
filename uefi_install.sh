@@ -137,15 +137,15 @@ configure() {
 	patch_for_virtualbox
 	echo "Finished."
 
-	exit
-	echo "Exited."
+	# exit
+	# echo "Exited."
 
-	echo "Unmounting disk..."
-	unmount_disk
-	echo "Finished."
+	# echo "Unmounting disk..."
+	# unmount_disk
+	# echo "Finished."
 
-	echo "Rebooting..."
-	reboot
+	# echo "Rebooting..."
+	# reboot
 }
 
 if [ "$1" == "setup" ]
