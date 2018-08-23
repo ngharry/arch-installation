@@ -57,7 +57,7 @@ setup() {
 	echo "Changed root for moving to actual installation."
 }
 
-if [ "$1" == "setup"]
+if [ "$1" == "setup" ]
 then 
 	setup
 else
