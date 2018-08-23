@@ -153,14 +153,14 @@ EOF
 	unmount_disk
 	echo "Finished."
 
-	read -p 'Do you want to reboot? (Y/N): ' option
-	if [ "$option" == "Y" ]; then
-		reboot
-	elif [ "$option" == "N" ]; then
-		echo "Finished installation. You can reboot later."
-	else 
-		echo "Invalid option."
-	fi
+	# read -p 'Do you want to reboot? (Y/N): ' option
+	# if [ "$option" == "Y" ]; then
+	# 	reboot
+	# elif [ "$option" == "N" ]; then
+	# 	echo "Finished installation. You can reboot later."
+	# else 
+	# 	echo "Invalid option."
+	# fi
 }
 
 setup
