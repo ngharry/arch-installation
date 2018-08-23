@@ -1,6 +1,7 @@
 TIMEZONE='Australia/Adelaide'
 LANGUAGE=en_US.UTF-8
-PASSWORD='..toor'
+PASSWORD='*'
+
 setup() {
 	echo "Partioning..."
 	partion
@@ -65,6 +66,7 @@ hostname_setup() {
 }
 
 password_setup() {
+	local PASSWORD=$1
 	echo -en "$PASSWORD\n$PASSWORD" | passwd
 }
 
@@ -99,8 +101,8 @@ configure() {
 	systemctl_setup
 	echo "Finished."
 
-	echo "Enter password..."
-	password_setup
+	read -sp 'Enter root password: ' PASSWORD
+	password_setup PASSWORD
 	echo "Finished."
 
 	echo "Setting up grub..."
@@ -109,10 +111,10 @@ configure() {
 
 
 	fullsys_update
-	echo "Full system updated."
+	echo "Full system updated." \
 	
 	exit
-	echo "Exited."
+	echo "Exited." \
 
 	reboot
 }
