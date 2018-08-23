@@ -142,6 +142,7 @@ configure() {
 
 exit
 EOF
+	chmod 755 /mnt/root/part2.sh
 	arch-chroot /mnt /root/part2.sh
 }
 
