@@ -37,31 +37,77 @@ mount_disk() {
 	mkdir /mnt/home
 	mount /dev/sda3 /mnt/home
 }
+
+time_setup() {
+	rm /etc/localtime
+	ln -s /usr/share/zoneinfo/Australia/Adelaide /etc/localtime
+	hwclock --systohc --utc
+}
+
+lang_setup() {
+	sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen
+	locale-gen
+	echo LANG=en_US.UTF-8 > /etc/locale.conf
+	export LANG=en_US.UTF-8
+}
+
+hostname_setup() {
+	echo harry-arch > /etc/hostname
+}
+
+password_setup() {
+	passwd
+}
+
+systemctl_setup() {
+	systemctl enable dhcpcd.service
+}
+
+grub_setup() {
+	passwd && pacman -S grub os-prober 
+	grub-install /dev/sda
+	grub-mkconfig -o /boot/grub/grub.cfg
+}
+
+fullsys_update() {
+	pacman -Syu
+}
+
+configure() {
+	echo "Setting time..."
+	time_setup
+	echo "Finished."
+
+	echo "Setting language..."
+	lang_setup
+	echo "Finished"
+
+	echo "Setting host name..."
+	hostname_setup
+	echo "Finished."
+
+	echo "Enabling dhcpcd..."
+	systemctl_setup
+	echo "Finished."
+
+	echo "Enter password..."
+	password_setup
+
+	echo "Finished."
+
+	echo "Setting up grub..."
+	grub_setup
+	echo "Finished."
+
+
+	fullsys_update
+	echo "Full system updated."
+	exit
+}
 if [ "$1" == "setup" ]
 then
 	setup
 else 
-	echo "Configure has not written yet."
+	configure
 fi
-
-#rm /etc/localtime
-#ln -s /usr/share/zoneinfo/Australia/Adelaide /etc/localtime
-#hwclock --systohc --utc
-
-#sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen
-#locale-gen
-#echo LANG=en_US.UTF-8 > /etc/locale.conf
-#export LANG=en_US.UTF-8
-
-#echo harry-arch > /etc/hostname
-#systemctl enable dhcpcd.service
-
-#passwd && pacman -S grub os-prober 
-
-#grub-install /dev/sda
-#grub-mkconfig -o /boot/grub/grub.cfg
-
-#pacman -Syu
-
-#exit
 
