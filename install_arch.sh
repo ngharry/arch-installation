@@ -66,8 +66,7 @@ hostname_setup() {
 }
 
 password_setup() {
-	local PASSWORD=$1
-	echo -en "$PASSWORD\n$PASSWORD" | passwd
+	passwd
 }
 
 systemctl_setup() {
@@ -101,8 +100,8 @@ configure() {
 	systemctl_setup
 	echo "Finished."
 
-	read -sp 'Enter root password: ' PASSWORD
-	password_setup PASSWORD
+	echo "Setting root password..."
+	password_setup
 	echo "Finished."
 
 	echo "Setting up grub..."
