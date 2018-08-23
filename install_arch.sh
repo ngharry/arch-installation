@@ -1,3 +1,6 @@
+TIMEZONE='Australia/Adelaide'
+LANGUAGE=en_US.UTF-8
+PASSWORD='..toor'
 setup() {
 	echo "Partioning..."
 	partion
@@ -22,7 +25,7 @@ partion() {
         	mkpart primary ext4 1MiB 20G \
         	set 1 boot on \
         	mkpart primary linux-swap 20G 22G \
-		mkpart primary ext4 22G 100%
+			mkpart primary ext4 22G 100%
 }
 
 format_fs() {
@@ -39,24 +42,30 @@ mount_disk() {
 }
 
 time_setup() {
-	rm /etc/localtime
-	ln -s /usr/share/zoneinfo/Australia/Adelaide /etc/localtime
+	if [ -f /etc/localtime ]
+	then 
+		echo "Remove existed file."
+		rm /etc/localtime
+	fi
+
+	ln -sT "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
 	hwclock --systohc --utc
 }
 
 lang_setup() {
-	sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen
+	sed -i 's/#$LANGUAGE/$LANGUAGE/g' /etc/locale.gen
 	locale-gen
-	echo LANG=en_US.UTF-8 > /etc/locale.conf
-	export LANG=en_US.UTF-8
+	echo LANG=$LANGUAGE > /etc/locale.conf
+	export LANG=$LANGUAGE
 }
 
 hostname_setup() {
-	echo harry-arch > /etc/hostname
+	read -p 'Hostname: ' HOSTNAME
+	echo $HOSTNAME > /etc/hostname
 }
 
 password_setup() {
-	passwd
+	echo -en "$PASSWORD\n$PASSWORD" | passwd
 }
 
 systemctl_setup() {
@@ -64,7 +73,7 @@ systemctl_setup() {
 }
 
 grub_setup() {
-	passwd && pacman -S grub os-prober 
+	pacman -S grub os-prober 
 	grub-install /dev/sda
 	grub-mkconfig -o /boot/grub/grub.cfg
 }
@@ -92,7 +101,6 @@ configure() {
 
 	echo "Enter password..."
 	password_setup
-
 	echo "Finished."
 
 	echo "Setting up grub..."
@@ -103,6 +111,7 @@ configure() {
 	fullsys_update
 	echo "Full system updated."
 	exit
+	echo "Exited."
 }
 if [ "$1" == "setup" ]
 then
