@@ -1,3 +1,6 @@
+TIMEZONE='Australia/Adelaide'
+LANGUAGE='en_US.UTF-8'
+
 partion() {
 	parted /dev/sda \
 		mklabel gpt \
@@ -54,7 +57,82 @@ setup() {
 	echo "Finished."
 
 	change_root
-	echo "Changed root for moving to actual installation."
+	# echo "Changed root for moving to actual installation."
+}
+
+set_timezone() {
+	if [ -f /etc/localtime ]
+	then 
+		rm /etc/localtime
+		echo "Removed existed /etc/localtime."
+	fi
+
+	ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+	hwclock --systohc 
+}
+
+set_language() {
+	sed -i 's/#$LANGUAGE/$LANGUAGE/g' /etc/locale.gen
+	locale-gen
+	echo LANG=$LANGUAGE > /etc/locale.conf
+	export LANG=$LANGUAGE
+}
+
+set_hostname() {
+	read -p 'Enter host name: ' hostname
+	echo hostname > /etc/hostname
+}
+
+configure_network() {
+	pacman -S networkmanager && systemctl enable NetworkManager
+}
+
+set_root_password() {
+	passwd
+}
+
+install_bootloader() {
+	pacman -S grub efibootmgr
+	grub-install --target=x86_64-efi --efi-directory=/boot
+	grub-mkconfig -o /boot/grub/grub.cfg
+}
+
+patch_for_virtualbox() {
+	mkdir /boot/EFI/boot
+	cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
+}
+
+configure() {
+	echo "Setting timezone..."
+	set_timezone
+	echo "Finished."
+
+	echo "Setting language..."
+	set_language
+	echo "Finished."
+
+	echo "Setting host name..."
+	set_hostname
+	echo "Finished."
+
+	echo "Configuring network..."
+	configure_network
+	echo "Finished."
+
+	echo "Setting root password..."
+	set_root_password
+	echo "Finished."
+
+	echo "Preparing to install bootloader..."
+	install_bootloader
+	echo "Finished."
+
+	# fix bug for virtualbox only
+	echo "Fixing bug for virtualbox..."
+	patch_for_virtualbox
+	echo "Finished."
+
+
 }
 
 if [ "$1" == "setup" ]
