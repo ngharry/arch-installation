@@ -55,7 +55,7 @@ setup() {
 	generate_fstab
 	echo "Finished."
 
-	cat > /mnt/root/part2.sh <<EOF
+	cat > /mnt/part2.sh <<EOF
 TIMEZONE=Australia/Adelaide
 LANGUAGE=en_US.UTF-8
 
@@ -142,8 +142,8 @@ configure() {
 
 exit
 EOF
-	chmod 755 /mnt/root/part2.sh
-	arch-chroot /mnt /root/part2.sh
+	chmod 755 /mnt/part2.sh
+	arch-chroot /mnt ./part2.sh
 }
 
 setup
