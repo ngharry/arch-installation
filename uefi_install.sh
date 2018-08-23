@@ -92,7 +92,6 @@ configure_network() {
 
 set_root_password() {
 	passwd
-
 	if [ $? -ne 0 ]; then
 		exit
 	fi
@@ -101,8 +100,14 @@ set_root_password() {
 install_bootloader() {
 	pacman -S grub efibootmgr
 	grub-install --target=x86_64-efi --efi-directory=/boot
-	
+	if [ $? -ne 0 ]; then
+		exit
+	fi
+
 	grub-mkconfig -o /boot/grub/grub.cfg
+	if [ $? -ne 0 ]; then
+		exit
+	fi
 }
 
 patch_for_virtualbox() {
@@ -145,22 +150,21 @@ configure() {
 }
 
 configure
+
+rm /mnt/configure.sh
 exit
 EOF
 	change_root configure.sh
 
-	echo "Unmounting disk..."
-	unmount_disk
-	echo "Finished."
-
-	# read -p 'Do you want to reboot? (Y/N): ' option
-	# if [ "$option" == "Y" ]; then
-	# 	reboot
-	# elif [ "$option" == "N" ]; then
-	# 	echo "Finished installation. You can reboot later."
-	# else 
-	# 	echo "Invalid option."
-	# fi
+	if [ -f /mnt/configure.sh ]
+    then
+        echo 'ERROR: Something failed inside the chroot, not unmounting filesystems so you can investigate.'
+        echo 'Make sure you unmount everything before you try to run this script again.'
+    else
+        echo 'Unmounting filesystems'
+        unmount_disk
+        echo 'Done! Reboot system.'
+    fi
 }
 
 setup
