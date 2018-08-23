@@ -56,8 +56,7 @@ setup() {
 	generate_fstab
 	echo "Finished."
 
-	change_root
-	# echo "Changed root for moving to actual installation."
+	change_root && echo "Changed root for moving to actual installation."
 }
 
 set_timezone() {
@@ -139,26 +138,18 @@ configure() {
 
 	pacman -Syu
 	echo "Full system upgraded."
-	
-	nohup exit &
-	echo "Exited."
-
-	echo "Unmounting disk..."
-	unmount_disk
-	echo "Finished."
-
-	read -p 'Do you want to reboot? (Y/N): ' option
-	if [ "$option" == "Y" ]
-	then 
-		reboot
-	else 
-		echo "Finished installation. You can reboot later."
-	fi
 }
 
 if [ "$1" == "setup" ]
 then 
 	setup
-else
+elif [ "$1" == "configure" ]
+then 
 	configure
+# After configuring, type `exit`
+elif [ "$1" == "unmount" ]
+then
+	echo "Unmounting disk..."
+	unmount_disk
+	echo "Finished."
 fi
