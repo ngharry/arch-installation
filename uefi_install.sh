@@ -40,8 +40,8 @@ generate_fstab() {
 
 change_root() {
 	local execute_script=$1
-	chmod +x /mnt/execute_script
-	arch-chroot /mnt ./execute_script
+	chmod +x /mnt/$execute_script
+	arch-chroot /mnt ./$execute_script
 }
 
 unmount_disk() {
