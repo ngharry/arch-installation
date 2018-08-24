@@ -73,7 +73,7 @@ setup() {
 
 main() {
 	local CONF_NAME=configure.sh
-	local BRANCH=experiment
+	local BRANCH=master
 	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/$BRANCH/configure.sh
 	
 	setup
