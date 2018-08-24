@@ -75,6 +75,7 @@ setup() {
 
 	if [ -f /mnt/$CONF_NAME ]; then
 		echo 'ERROR: Failed during chroot. Try again.'
+		exit
 	else
     	echo 'Unmounting filesystems'
     	unmount_disk
