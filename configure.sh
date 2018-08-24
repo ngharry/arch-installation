@@ -109,10 +109,16 @@ configure() {
 	# fix bug for virtualbox only
 	echo "Fixing bug for virtualbox..."
 	patch_for_virtualbox
-	echo "Finished." 
+	echo "Finished."
 
-	echo "Creating user..."
-	create_user
+	local option=Y 
+	while [ "$option" == "Y"]
+	do
+		echo "Creating user..."
+		create_user
+		read -p "Do you want to create more user? (Y/N): " option
+	done
+
 
 	pacman -Syu
 	echo "Full system upgraded."
