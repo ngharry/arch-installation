@@ -63,6 +63,22 @@ patch_for_virtualbox() {
 	cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 }
 
+create_user() {
+	read -p 'Username: ' USERNAME
+	useradd -m -g users -G audio,video,network,wheel,storage -s /bin/bash $USERNAME
+
+	passwd $USERNAME
+	if [ $? -ne 0 ]; then
+		echo "Failed to create user."
+		exit
+	fi
+
+	echo "Setting up privilege..."
+	local PRIVILEGE='%wheel ALL=(ALL) ALL'
+	sed -i "s/# $PRIVILEGE/$PRIVILEGE/g" /etc/sudoers
+	echo "Finished."
+}
+
 configure() {
 	echo "Setting timezone..."
 	set_timezone $TIMEZONE
@@ -95,6 +111,8 @@ configure() {
 	patch_for_virtualbox
 	echo "Finished." 
 
+	echo "Creating user..."
+	create_user
 
 	pacman -Syu
 	echo "Full system upgraded."
