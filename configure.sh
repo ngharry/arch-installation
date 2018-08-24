@@ -65,9 +65,9 @@ patch_for_virtualbox() {
 
 create_user() {
 	read -p 'Username: ' USERNAME
-	useradd -m -g users -G audio,video,network,wheel,storage -s /bin/bash $USERNAME 
+	useradd -m -g users -G audio,video,network,wheel,storage -s /bin/bash $USERNAME \
 	&& passwd $USERNAME
-	
+
 	if [ $? -ne 0 ]; then
 		echo "Failed to create user."
 		exit
@@ -112,7 +112,7 @@ configure() {
 	echo "Finished."
 
 	local option=Y 
-	while [ "$option" == "Y"]
+	while [ "$option" == "Y" ]
 	do
 		echo "Creating user..."
 		create_user
