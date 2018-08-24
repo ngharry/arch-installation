@@ -2,21 +2,24 @@ TIMEZONE=Australia/Adelaide
 LANGUAGE=en_US.UTF-8
 
 set_timezone() {
-	if [ -f /etc/localtime ]
-	then 
+	local ZONE=$1
+
+	if [ -f /etc/localtime ]; then 
 		rm /etc/localtime
 		echo "Removed existed /etc/localtime."
 	fi
 
-	ln -sf /usr/share/zoneinfo/$1 /etc/localtime
+	ln -sf /usr/share/zoneinfo/$ZONE /etc/localtime
 	hwclock --systohc 
 }
 
 set_language() {
-	sed -i 's/#$1/$1/g' /etc/locale.gen
+	local LANGUAGE=$1
+
+	sed -i 's/#$LANGUAGE/$LANGUAGE/g' /etc/locale.gen
 	locale-gen
-	echo LANG=$1 > /etc/locale.conf
-	export LANG=$1
+	echo LANG=$LANGUAGE > /etc/locale.conf
+	export LANG=$LANGUAGE
 }
 
 set_hostname() {
@@ -33,6 +36,11 @@ set_root_password() {
 	if [ $? -ne 0 ]; then
 		exit
 	fi
+}
+
+install_necessary_packages() {
+	local PACKAGES='vim bash-completion zsh zsh-completions'
+	pacman -Sy $PACKAGES
 }
 
 install_bootloader() {
@@ -78,10 +86,15 @@ configure() {
 	echo "Preparing to install bootloader..."
 	install_bootloader
 
+	echo "Installing necessary packages..."
+	install_necessary_packages
+	echo "Finished."
+	
 	# fix bug for virtualbox only
 	echo "Fixing bug for virtualbox..."
 	patch_for_virtualbox
 	echo "Finished." 
+
 
 	pacman -Syu
 	echo "Full system upgraded."
