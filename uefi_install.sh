@@ -1,9 +1,5 @@
-CONF_NAME=configure.sh
-configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/master/configure.sh
 
-# $1: FAT32
-# $2: swap
-# $3: /
+
 partion() {
 	local fat_size=$1
 	local swap_size=$2
@@ -30,7 +26,9 @@ mount_fs() {
 }
 
 install_base() {
-	echo 'Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch' >> /etc/pacman.d/mirrorlist
+	echo 'Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch' \
+	>> /etc/pacman.d/mirrorlist
+	
 	pacstrap /mnt base base-devel
 }
 
@@ -51,7 +49,8 @@ unmount_disk() {
 
 setup() {
 	echo "Disk partioning..."
-	partion 512 2000
+	read -p "How much disk space do you want for swap? " SWAP_SIZE
+	partion 512 $SWAP_SIZE
 	echo "Finished."
 
 	echo "Formating partions..."
@@ -72,7 +71,16 @@ setup() {
 
 	curl $configure_sh_link > /mnt/$CONF_NAME
 	change_root $CONF_NAME
+}
 
+main() {
+	local CONF_NAME=configure.sh
+	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/master/configure.sh
+	
+	setup
+
+	# Check if failed or not during chroot
+	# if succeed, /mnt/$CONF_NAME would not exist.
 	if [ -f /mnt/$CONF_NAME ]; then
 		echo 'ERROR: Failed during chroot. Try again.'
 		exit
@@ -83,4 +91,4 @@ setup() {
 	fi
 }
 
-setup
+main

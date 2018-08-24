@@ -1,6 +1,3 @@
-TIMEZONE=Australia/Adelaide
-LANGUAGE='en_US.UTF-8'
-
 set_timezone() {
 	local ZONE=$1
 
@@ -31,20 +28,24 @@ configure_network() {
 	pacman -S networkmanager && systemctl enable NetworkManager
 }
 
-set_root_password() {
-	passwd
-	if [ $? -ne 0 ]; then
-		exit
-	fi
+set_user_password() {
+	local USER=$1
+	local status=1
+	while [ $status -ne 0 ]
+	do
+		passwd $USER 
+		status=$?
+	done
 }
 
 install_necessary_packages() {
-	local PACKAGES='vim bash-completion zsh zsh-completions'
+	local PACKAGES='vim bash-completion zsh zsh-completions sudo'
 	pacman -Sy $PACKAGES
 }
 
 install_bootloader() {
 	pacman -S grub efibootmgr
+
 	grub-install --target=x86_64-efi --efi-directory=/boot
 	if [ $? -ne 0 ]; then
 		echo "grub-install failed."
@@ -58,35 +59,36 @@ install_bootloader() {
 	fi
 }
 
-patch_for_virtualbox() {
+virtualbox_bug_patch() {
 	mkdir /boot/EFI/boot
 	cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 }
 
 create_user() {
-	read -p 'Username: ' USERNAME
-	useradd -m -g users -G audio,video,network,wheel,storage -s /bin/bash $USERNAME \
-	&& passwd $USERNAME
+	local status=1
+	while [ $status -ne 0 ]
+	do
+		read -p 'Username: ' USERNAME
+		useradd -m -g users -G audio,video,network,wheel,storage \
+		-s /bin/bash $USERNAME
+		status=$?
+	done
+		set_user_password $USERNAME
 
-	if [ $? -ne 0 ]; then
-		echo "Failed to create user."
-		exit
-	fi
-
-	echo "Setting up privilege..."
-	local PRIVILEGE='%wheel ALL=(ALL) ALL'
-	sed -i "s/# $PRIVILEGE/$PRIVILEGE/g" /etc/sudoers
-	echo "Finished."
+		echo "Setting up privilege..."
+		local PRIVILEGE='%wheel ALL=(ALL) ALL'
+		sed -i "s/# $PRIVILEGE/$PRIVILEGE/g" /etc/sudoers
+		echo "Finished."
 }
 
 configure() {
 	echo "Setting timezone..."
 	set_timezone $TIMEZONE
-	echo "Finished."
+	echo "Time zone is set to $TIMEZONE."
 
 	echo "Setting language..."
 	set_language $LANGUAGE
-	echo "Finished."
+	echo "Language package is set to $LANGUAGE"
 
 	echo "Setting host name..."
 	set_hostname
@@ -97,7 +99,7 @@ configure() {
 	echo "Finished."
 
 	echo "Setting root password..."
-	set_root_password
+	set_user_password root
 
 	echo "Preparing to install bootloader..."
 	install_bootloader
@@ -108,7 +110,7 @@ configure() {
 	
 	# fix bug for virtualbox only
 	echo "Fixing bug for virtualbox..."
-	patch_for_virtualbox
+	virtualbox_bug_patch
 	echo "Finished."
 
 	local option=Y 
@@ -119,11 +121,18 @@ configure() {
 		read -p "Do you want to create more user? (Y/N): " option
 	done
 
-
 	pacman -Syu
 	echo "Full system upgraded."
 }
 
-configure
-rm configure.sh
-exit
+main() {
+	local TIMEZONE=Australia/Adelaide
+	local LANGUAGE='en_US.UTF-8'
+	
+	configure
+	rm configure.sh
+	
+	exit
+}
+
+main
