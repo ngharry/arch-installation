@@ -1,5 +1,5 @@
 TIMEZONE=Australia/Adelaide
-LANGUAGE=en_US.UTF-8
+LANGUAGE='en_US.UTF-8'
 
 set_timezone() {
 	local ZONE=$1
@@ -16,7 +16,7 @@ set_timezone() {
 set_language() {
 	local LANGUAGE=$1
 
-	sed -i 's/#$LANGUAGE/$LANGUAGE/g' /etc/locale.gen
+	sed -i "s/#$LANGUAGE/$LANGUAGE/g" /etc/locale.gen
 	locale-gen
 	echo LANG=$LANGUAGE > /etc/locale.conf
 	export LANG=$LANGUAGE
