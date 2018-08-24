@@ -1,5 +1,5 @@
-# CONF_NAME=configure.sh
-# configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/master/configure.sh
+CONF_NAME=configure.sh
+configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/master/configure.sh
 
 # $1: FAT32
 # $2: swap
