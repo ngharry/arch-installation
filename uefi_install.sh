@@ -1,5 +1,3 @@
-
-
 partion() {
 	local fat_size=$1
 	local swap_size=$2
@@ -75,7 +73,8 @@ setup() {
 
 main() {
 	local CONF_NAME=configure.sh
-	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/master/configure.sh
+	local BRANCH=experiment
+	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/$BRANCH/configure.sh
 	
 	setup
 
