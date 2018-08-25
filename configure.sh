@@ -1,6 +1,31 @@
+#!/bin/bash
+# Copyright (c) Harry Nguyen
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# This script will configure the operating system (setting time zone, 
+# setting language, changing password,...) during arch-chroot 
+
 set_timezone() {
 	local ZONE=$1
 
+	# if localtime existed then delete it to make dynamic link
 	if [ -f /etc/localtime ]; then 
 		rm /etc/localtime
 		echo "Removed existed /etc/localtime."
@@ -12,8 +37,11 @@ set_timezone() {
 
 set_language() {
 	local LANGUAGE=$1
-
+	# Uncomment $LANGUAGE in locale.gen
+	# #en_US.UTF-8 -> en_US.UTF-8
 	sed -i "s/#$LANGUAGE/$LANGUAGE/g" /etc/locale.gen
+	
+	# generate locale
 	locale-gen
 	echo LANG=$LANGUAGE > /etc/locale.conf
 	export LANG=$LANGUAGE
@@ -25,11 +53,14 @@ set_hostname() {
 }
 
 configure_network() {
+	# install network
 	pacman -S networkmanager && systemctl enable NetworkManager
 }
 
 set_user_password() {
 	local USER=$1
+
+	# status indicates if passwd succeed or not
 	local status=1
 	while [ $status -ne 0 ]
 	do
@@ -47,18 +78,22 @@ install_bootloader() {
 	pacman -S grub efibootmgr
 
 	grub-install --target=x86_64-efi --efi-directory=/boot
+	# if returned value of grub-install is not 0 then exit because of failure
 	if [ $? -ne 0 ]; then
 		echo "grub-install failed."
 		exit
 	fi
 
 	grub-mkconfig -o /boot/grub/grub.cfg
+
 	if [ $? -ne 0 ]; then
 		echo "grub-mkconfig failed."
 		exit
 	fi
 }
 
+# When installing arch linux on virtualbox, you just can boot installed 
+# Arch when reboot but can not when shut down. This is the bug patch
 virtualbox_bug_patch() {
 	mkdir /boot/EFI/boot
 	cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
@@ -66,16 +101,28 @@ virtualbox_bug_patch() {
 
 create_user() {
 	local status=1
+
+	# Keep prompting user, until it succeeds
 	while [ $status -ne 0 ]
 	do
 		read -p 'Username: ' USERNAME
+
+		# Create user
 		useradd -m -g users -G audio,video,network,wheel,storage \
 		-s /bin/bash $USERNAME
+
+		# indicates status of useradd
 		status=$?
 	done
+
+		# Set password
 		set_user_password $USERNAME
 
 		echo "Setting up privilege..."
+
+		# Comment out privilege in visudo
+		# # %wheel ALL=(ALL) ALL -> %wheel ALL=(ALL) ALL
+		# see 'sed in linux'
 		local PRIVILEGE='%wheel ALL=(ALL) ALL'
 		sed -i "s/# $PRIVILEGE/$PRIVILEGE/g" /etc/sudoers
 		echo "Finished."
@@ -130,6 +177,10 @@ main() {
 	local LANGUAGE='en_US.UTF-8'
 	
 	configure
+
+	# remove configure.sh in /mnt
+	# for indicates error in uefi_install.sh
+	# if configure.sh still exists then there must be errors somewhere
 	rm configure.sh
 	
 	exit

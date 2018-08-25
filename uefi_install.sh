@@ -1,7 +1,37 @@
+#!/bin/bash
+# Copyright (c) Harry Nguyen
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# This script will set up pre-installation for Arch (such as disk partioning,
+# disk mounting, or file system table generating,...)
 partion() {
+	# FAT32 size
 	local fat_size=$1
+
+	# Swap size
 	local swap_size=$2
 
+	# Calculate the exact disk space for swap and fat (in MB)
+	# the rest of disk space is taken as / space
+	# Usage: partion fat_size swap_size
+	# Ex: partion 512 2000 
 	parted /dev/sda \
 		mklabel gpt \
 		mkpart ESP fat32 1MiB $(($fat_size + 1))MiB \
@@ -24,9 +54,11 @@ mount_fs() {
 }
 
 install_base() {
+	# set mirror
 	echo 'Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch' \
 	>> /etc/pacman.d/mirrorlist
 	
+	# install base and base for developers 
 	pacstrap /mnt base base-devel
 }
 
@@ -36,7 +68,10 @@ generate_fstab() {
 
 change_root() {
 	local execute_script=$1
+
+	# Provide privilege for execute_script
 	chmod +x /mnt/$execute_script
+	# Run execute_script during chroot
 	arch-chroot /mnt ./$execute_script
 }
 
@@ -72,7 +107,10 @@ setup() {
 }
 
 main() {
+	# configure file (execute during chroot)
 	local CONF_NAME=configure.sh
+
+	# change branch when downloading configure.sh from github
 	local BRANCH=master
 	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/$BRANCH/configure.sh
 	
