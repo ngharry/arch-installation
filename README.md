@@ -39,20 +39,20 @@ How much disk space do you want for swap? 2000
 
 You will be asked for entering host name, root password, creating users. For example:
 
-*Host name*
+**Host name**
 ```
 Enter host name: arch-os
 ```
 
-*Setting root password*
+**Setting root password**
 ```
 Enter new UNIX password:
 Retype new UNIX password:
 passwd: password updated successfully
 ```
-**If you enter 2 unmatched passwords, you will be asked for entering again.**
+*If you enter 2 unmatched passwords, you will be asked for entering again.*
 
-*Create users*
+**Create users**
 ```
 Username: harry
 Changing password for harry.
@@ -62,9 +62,10 @@ Retype new UNIX password:
 passwd: password updated successfully
 Do you want to create more user? (Y/N): N
 ```
-** If any errors occur during creating user, you will be asked for re-enter username and password.**
-**When you are asking if you want to create more user, type `Y` (UPPER CASE) or `N` (UPPER CASE).**
+* If any errors occur during creating user, you will be asked for re-enter username and password.*
+
+*When you are asking if you want to create more user, type `Y` (UPPER CASE) or `N` (UPPER CASE).*
 
 If no error occurs, after finishing installation process, you can reboot your system.  
 
-*[IMPORTANT]* After rebooting and playing around with your new system, shutdown and *REMEMBER* to remove disk from Virtual Drive under Settings > Storage > Attributes, click the disk icon next to `Optical Drive:` and choose `Remove Disk from Virtual Drive`. If you do not do this, next time the system will boot to live CD again.
+**[IMPORTANT]** After rebooting and playing around with your new system, shutdown and **REMEMBER** to remove disk from Virtual Drive under Settings > Storage > Attributes, click the disk icon next to `Optical Drive:` and choose `Remove Disk from Virtual Drive`. If you do not do this, next time the system will boot to live CD again.
