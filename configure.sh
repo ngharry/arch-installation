@@ -75,13 +75,22 @@ install_necessary_packages() {
 }
 
 install_bootloader() {
-	pacman -S grub efibootmgr
+	if [ -d /sys/firmware/efi ]; then
+		pacman -S grub efibootmgr
 
-	grub-install --target=x86_64-efi --efi-directory=/boot
-	# if returned value of grub-install is not 0 then exit because of failure
-	if [ $? -ne 0 ]; then
-		echo "grub-install failed."
-		exit
+		grub-install --target=x86_64-efi --efi-directory=/boot
+		# if returned value of grub-install is not 0 then exit because of failure
+		if [ $? -ne 0 ]; then
+			echo "grub-install failed."
+			exit
+		fi
+	else
+		pacman -S grub
+		grub-install /dev/sda
+		if [ $? -ne 0 ]; then
+			echo "grub-install failed."
+			exit
+		fi
 	fi
 
 	grub-mkconfig -o /boot/grub/grub.cfg

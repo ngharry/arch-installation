@@ -22,35 +22,58 @@
 # This script will set up pre-installation for Arch (such as disk partioning,
 # disk mounting, or file system table generating,...)
 partion() {
-	# FAT32 size
-	local fat_size=$1
-
 	# Swap size
 	local swap_size=$2
 
-	# Calculate the exact disk space for swap and fat (in MB)
-	# the rest of disk space is taken as / space
-	# Usage: partion fat_size swap_size
-	# Ex: partion 512 2000 
-	parted /dev/sda \
-		mklabel gpt \
-		mkpart ESP fat32 1MiB $(($fat_size + 1))MiB \
-		set 1 boot on \
-		mkpart primary linux-swap $(($fat_size + 2))MiB $(($swap_size + $fat_size + 2))MiB \
-		mkpart primary ext4 $(($swap_size + $fat_size + 3))MiB 100%
+	if [ -d /sys/firmware/efi ]; then
+		# FAT32 size
+		local fat_size=$1
+
+		# Calculate the exact disk space for swap and fat (in MB)
+		# the rest of disk space is taken as / space
+		# Usage: partion fat_size swap_size
+		# Ex: partion 512 2000 
+		parted /dev/sda \
+			mklabel gpt \
+			mkpart ESP fat32 1MiB $(($fat_size + 1))MiB \
+			set 1 boot on \
+			mkpart primary linux-swap $(($fat_size + 2))MiB $(($swap_size + $fat_size + 2))MiB \
+			mkpart primary ext4 $(($swap_size + $fat_size + 3))MiB 100%
+	else
+		# size of home
+		local home_size=$1
+		
+		parted /dev/sda \
+			mklabel msdos \
+			mkpart primary ext4 1MiB $(($home_size + 1))MiB \
+			mkpart primary linux-swap $(($home_size + 2))MiB $(($swap_size + $home_size + 2))MiB \
+			mkpart primary ext4 $(($swap_size + $home_size + 3))MiB 100% \
+			set 3 boot on
+	fi
 }
 
 format_partion() {
-	mkfs.fat -F32 /dev/sda1
+	if [ -d /sys/firmware/efi ]; then	
+		mkfs.fat -F32 /dev/sda1
+	else 
+		mkfs.ext4 /dev/sda1
+	fi
+
 	mkfs.ext4 /dev/sda3
 	mkswap /dev/sda2
 	swapon /dev/sda2
 }
 
 mount_fs() {
-	mount /dev/sda3 /mnt
-	mkdir /mnt/boot
-	mount /dev/sda1 /mnt/boot
+	if [ -d /sys/firmware/efi ]; then
+		mount /dev/sda3 /mnt
+		mkdir /mnt/boot
+		mount /dev/sda1 /mnt/boot
+	else
+		mount /dev/sda3 /mnt
+		mkdir /mnt/home
+		mount /dev/sda1 /mnt/home
+	fi
 }
 
 install_base() {
@@ -76,14 +99,21 @@ change_root() {
 }
 
 unmount_disk() {
-	umount /mnt/boot
+	if [ -d /sys/firmware/efi ]; then
+		umount /mnt/boot
+	else
+		umount /mnt/home
+	fi
 	umount /mnt
 }
 
 setup() {
 	echo "Disk partioning..."
 	read -p "How much disk space do you want for swap? " SWAP_SIZE
-	partion 512 $SWAP_SIZE
+	if [ -d /sys/firmware/efi ]; then
+		partion 512 $SWAP_SIZE
+	else
+		partion 5000 $SWAP_SIZE
 	echo "Finished."
 
 	echo "Formating partions..."
