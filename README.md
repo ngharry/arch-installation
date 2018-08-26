@@ -70,6 +70,14 @@ passwd: password updated successfully
 *If you enter 2 unmatched passwords, you will be asked for entering again.*
 
 **Create users**
+You will be asked if you want to create user or remain root privilege:
+```
+Do you want to create user? (Y/N) Y
+```
+Type `Y` or `N` (in UPPERCASE) depends on what you want.
+
+
+If you choose to create user, you will need to enter username and password.
 ```
 Username: harry
 Changing password for harry.
