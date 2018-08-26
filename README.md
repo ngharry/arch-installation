@@ -27,3 +27,44 @@ chmod +x arch_install.sh
 4. Boot into live CD of Arch (be patient, it could take a while with a black screen).
 
 ## Installing
+Use `arch_install.sh` with execute permission for running installation.
+```
+./arch_install.sh
+```
+
+When you are asked for swap disk size, enter swap size in MB. Example below illustrates creating 2GB swap.
+```
+How much disk space do you want for swap? 2000
+```
+
+You will be asked for entering host name, root password, creating users. For example:
+
+*Host name*
+```
+Enter host name: arch-os
+```
+
+*Setting root password*
+```
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+```
+**If you enter 2 unmatched passwords, you will be asked for entering again.**
+
+*Create users*
+```
+Username: harry
+Changing password for harry.
+(currrent) UNIX password:
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+Do you want to create more user? (Y/N): N
+```
+** If any errors occur during creating user, you will be asked for re-enter username and password.**
+**When you are asking if you want to create more user, type `Y` (UPPER CASE) or `N` (UPPER CASE).**
+
+If no error occurs, after finishing installation process, you can reboot your system.  
+
+*[IMPORTANT]* After rebooting and playing around with your new system, shutdown and *REMEMBER* to remove disk from Virtual Drive under Settings > Storage > Attributes, click the disk icon next to `Optical Drive:` and choose `Remove Disk from Virtual Drive`. If you do not do this, next time the system will boot to live CD again.
