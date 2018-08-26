@@ -1,6 +1,6 @@
 # Automatic Arch Linux Installation
 
-This is a bash script used for automating Arch Linux installation process. *At the time, this script is just used for Arch Linux in VirtualBox*
+This is a bash script used for automating Arch Linux installation process. *At the time, this script is just used for Arch Linux in VirtualBox.*
 
 ## Getting Started
 
@@ -18,21 +18,21 @@ chmod +x arch_install.sh
 
 ## Prerequisites
 1. A virtual environment (VirtualBox, VmWare,..). I am testing this script using VirtualBox.
-2. Arch OS ISO [download here](https://mirror.aarnet.edu.au/pub/archlinux/iso/2018.08.01/archlinux-2018.08.01-x86_64.iso)
+2. Download Arch OS ISO [here](https://mirror.aarnet.edu.au/pub/archlinux/iso/2018.08.01/archlinux-2018.08.01-x86_64.iso)
 3. Create a virtual machine. System recommended:
   * At least 20GB for virtual hard disk.
   * At least 1GB RAM
-  * Under Settings > System > Motherboard, tick `Enable EFI (special OSes only). 
+  * Under Settings > System > Motherboard, tick `Enable EFI (special OSes only).`
 
 4. Boot into live CD of Arch (be patient, it could take a while with a black screen).
 
 ## Installing
-Use `arch_install.sh` with execute permission for running installation.
+Use `arch_install.sh` with execute permission for running installation:
 ```
 ./arch_install.sh
 ```
 
-When you are asked for swap disk size, enter swap size in MB. Example below illustrates creating 2GB swap.
+When you are asked for swap disk size, enter swap size in MB. Example below illustrates creating 2GB swap:
 ```
 How much disk space do you want for swap? 2000
 ```
@@ -64,7 +64,7 @@ Do you want to create more user? (Y/N): N
 ```
 *If any errors occur during creating user, you will be asked for re-enter username and password.*
 
-*When you are asking if you want to create more user, type `Y` (UPPER CASE) or `N` (UPPER CASE).*
+*When you are asked if you want to create more user, type `Y` or `N` (in UPPER CASE).*
 
 If no error occurs, after finishing installation process, you can reboot your system.  
 
