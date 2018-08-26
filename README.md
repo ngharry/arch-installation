@@ -35,7 +35,7 @@ chmod +x arch_install.sh
 ```
 
 ## Prerequisites
-1. A virtual environment (VirtualBox, VmWare,..). I am testing this script using VirtualBox.
+1. A virtual environment (VirtualBox, VmWare, etc.). I am testing this script using VirtualBox.
 2. Download Arch OS ISO [here](https://mirror.aarnet.edu.au/pub/archlinux/iso/2018.08.01/archlinux-2018.08.01-x86_64.iso)
 3. Create a virtual machine. System recommended:
   * At least 20GB for virtual hard disk.
@@ -82,8 +82,11 @@ Do you want to create more user? (Y/N): N
 ```
 *If any errors occur during creating user, you will be asked for re-enter username and password.*
 *When you are asked if you want to create more user, type `Y` or `N` (in UPPER CASE).*
+
 *[TODO] Ask user if they want to create user or just want root.*
 
-If no error occurs, after finishing installation process, you can reboot your system.  
+If no error occurs, after finishing installation process, you can reboot your system.
 
 **[IMPORTANT]** After rebooting and playing around with your new system, shutdown and **REMEMBER** to remove disk from Virtual Drive under Settings > Storage > Attributes, click the disk icon next to `Optical Drive:` and choose `Remove Disk from Virtual Drive`. If you do not do this, next time the system will boot to live CD again.
+
+*[TODO] Post-installation (X Server, Desktop Environment, Display Manager, Web browser, Sublime Text, Theme, etc.).*
