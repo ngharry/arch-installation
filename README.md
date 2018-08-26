@@ -62,7 +62,7 @@ Retype new UNIX password:
 passwd: password updated successfully
 Do you want to create more user? (Y/N): N
 ```
-* If any errors occur during creating user, you will be asked for re-enter username and password.*
+*If any errors occur during creating user, you will be asked for re-enter username and password.*
 
 *When you are asking if you want to create more user, type `Y` (UPPER CASE) or `N` (UPPER CASE).*
 
