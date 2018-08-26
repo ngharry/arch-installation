@@ -128,6 +128,53 @@ create_user() {
 		echo "Finished."
 }
 
+# Manual Installation
+# - Open /etc/pacman.conf
+# - Append 
+#   >[arcolinux_repo_iso]
+#   >SigLevel = Never
+#   >Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
+#   to the end of /etc/pacman.conf
+# - Update system `pacman -Sy`
+# - Install yaourt and package-query `pacman -S yaourt package-query`
+# - After finish installation, comment out those appended lines above. We dont
+#   want trash packages appear in our system.
+#
+# Below is the automatic installation 
+install_yaourt() {
+	# To avoid append the content multiple times
+
+	# Find if [arcolinux_repo_iso] is in /etc/pacman.conf
+	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
+	# if not found, then append the content below to /etc/pacman.conf
+	if [ $? -ne 0 ]; then
+		cat >> /etc/pacman.conf <<"EOF"
+[arcolinux_repo_iso]
+SigLevel = Never
+Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
+EOF
+	fi
+
+	pacman -Sy
+	pacman -S yaourt package-query
+
+	# To comment out the appended lines above
+
+	# Find [arcolinux_repo_iso] again
+	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
+	# If found, then comment out the appended lines above
+	if [ $? -eq 0 ]; then
+		# Get total number of lines in /etc/pacman.conf
+		local NUMLINES=$(wc -l < /etc/pacman.conf)
+
+		# This command means replace any empty character by # from 
+		# line NUMLINES - 2 to the end of file.
+		#
+		# Also means comment out the last 3 lines of /etc/pacman.conf
+		sed -i "$(($NUMLINES-2)),\$s/^/#/" /etc/pacman.conf
+	fi
+}
+
 configure() {
 	echo "Setting timezone..."
 	set_timezone $TIMEZONE
@@ -153,6 +200,7 @@ configure() {
 
 	echo "Installing necessary packages..."
 	install_necessary_packages
+	install_yaourt
 	echo "Finished."
 	
 	# fix bug for virtualbox only
@@ -178,8 +226,7 @@ main() {
 	
 	configure
 
-	# remove configure.sh in /mnt
-	# for indicates error in uefi_install.sh
+	# remove configure.sh in /mnt for indicates error in uefi_install.sh
 	# if configure.sh still exists then there must be errors somewhere
 	rm configure.sh
 	
