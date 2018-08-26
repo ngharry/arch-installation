@@ -2,6 +2,24 @@
 
 This is a bash script used for automating Arch Linux installation process. *At the time, this script is just used for Arch Linux in VirtualBox.*
 
+## What can this script do? 
+- Disk partion (FAT32, swap and /).
+- Make file system.
+- Mount install disk.
+- Install base and base devel.
+- Generate file system table
+- `arch-chroot` and execute configuration script which can do the following:
+  * Set up time zone.
+  * Set up language.
+  * Set up host name.
+  * Install networkmanager and enable NetworkManager.service.
+  * Set root password.
+  * Create users.
+  * Install boot loader.
+  * Install vim, zsh, bash-completion, sudo and zsh-completion.
+  * Install yaourt.
+  * Upgrade whole system.
+
 ## Getting Started
 
 Download `arch_install.sh` to the live Arch Linux environment:
