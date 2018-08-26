@@ -142,7 +142,7 @@ EOF
 	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
 	if [ $? -eq 0 ]; then
 		local NUMLINES=$(wc -l < /etc/pacman.conf)
-		sed -i "$(($NUMLINES-2)),\$s/^/#" /etc/pacman.conf
+		sed -i "$(($NUMLINES-2)),\$s/^/#/" /etc/pacman.conf
 	fi
 }
 
