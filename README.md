@@ -20,9 +20,9 @@ chmod +x arch_install.sh
 1. A virtual environment (VirtualBox, VmWare,..). I am testing this script using VirtualBox.
 2. Arch OS ISO [download here](https://mirror.aarnet.edu.au/pub/archlinux/iso/2018.08.01/archlinux-2018.08.01-x86_64.iso)
 3. Create a virtual machine 
-..* *System recommended:*
-..* At least 20GB for virtual hard disk.
-..* At least 1GB RAM
-..* Under Settings > System > Motherboard, tick `Enable EFI (special OSes only). 
+  * *System recommended:*
+  * At least 20GB for virtual hard disk.
+  * At least 1GB RAM
+  * Under Settings > System > Motherboard, tick `Enable EFI (special OSes only). 
 [TODO] Automate both MRB and UEFI
 4. Boot into live CD of Arch (be patient, it could take a while with a black screen).
