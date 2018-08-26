@@ -130,7 +130,7 @@ create_user() {
 
 install_yaourt() {
 	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
-	if [ $ARCOLINUX_STATUS -ne 0 ]; then
+	if [ $? -ne 0 ]; then
 		cat >> /etc/pacman.conf <<"EOF"
 [arcolinux_repo_iso]
 SigLevel = Never
