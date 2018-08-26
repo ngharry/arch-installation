@@ -128,6 +128,24 @@ create_user() {
 		echo "Finished."
 }
 
+install_yaourt() {
+	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
+	if [ $ARCOLINUX_STATUS -ne 0 ]; then
+		cat >> /etc/pacman.conf <<"EOF"
+[arcolinux_repo_iso]
+SigLevel = Never
+Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
+EOF
+	fi
+	pacman -Sy
+	pacman -S yaourt package-query
+	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
+	if [ $? -eq 0 ]; then
+		local NUMLINES=$(wc -l < /etc/pacman.conf)
+		sed -i "$(($NUMLINES-2)),\$s/^/#" /etc/pacman.conf
+	fi
+}
+
 configure() {
 	echo "Setting timezone..."
 	set_timezone $TIMEZONE
@@ -153,6 +171,7 @@ configure() {
 
 	echo "Installing necessary packages..."
 	install_necessary_packages
+	install_yaourt
 	echo "Finished."
 	
 	# fix bug for virtualbox only
@@ -173,17 +192,18 @@ configure() {
 }
 
 main() {
-	local TIMEZONE=Australia/Adelaide
-	local LANGUAGE='en_US.UTF-8'
+	# local TIMEZONE=Australia/Adelaide
+	# local LANGUAGE='en_US.UTF-8'
 	
-	configure
+	# configure
 
 	# remove configure.sh in /mnt
 	# for indicates error in uefi_install.sh
 	# if configure.sh still exists then there must be errors somewhere
-	rm configure.sh
+	# rm configure.sh
 	
-	exit
+	# exit
+	install_yaourt
 }
 
 main
