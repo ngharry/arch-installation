@@ -98,7 +98,9 @@ If no error occurs, after finishing installation process, you can reboot your sy
 - [ ] Install fonts.
 
 - [ ] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
+
 **Description:**
+
 With deepin and lightdm: the login screen stays white, after I managed to login successfully, a white blank screen shows up and I could not click anything.
 
 With KDE and SDDM: the mouse and touchpad(right-click) are stucked at 1 point.
