@@ -208,13 +208,16 @@ configure() {
 	virtualbox_bug_patch
 	echo "Finished."
 
-	local option=Y 
-	while [ "$option" == "Y" ]
-	do
-		echo "Creating user..."
-		create_user
-		read -p "Do you want to create more user? (Y/N): " option
-	done
+	read -p 'Do you want to create user? (Y/N) ' option
+	if [ "$option" == "Y" ]; then
+		local option_user=Y
+		while [ "$option_user" == "Y" ]
+		do
+			echo "Creating user..."
+			create_user
+			read -p "Do you want to create more user? (Y/N): " option_user
+		done
+	fi
 
 	pacman -Syu
 	echo "Full system upgraded."

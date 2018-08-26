@@ -89,7 +89,7 @@ If no error occurs, after finishing installation process, you can reboot your sy
 ## TODO List
 - [x] Install yaourt.
 - [ ] Allow both MRB and UEFI to run this script.
-- [ ] Ask if user want to create user or not.
+- [x] Ask if user want to create user or not.
 - [ ] Install X Server.
 - [ ] Install Desktop Environment and Display Manager.
 - [ ] Install themes.
