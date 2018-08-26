@@ -114,6 +114,7 @@ setup() {
 		partion 512 $SWAP_SIZE
 	else
 		partion 5000 $SWAP_SIZE
+	fi
 	echo "Finished."
 
 	echo "Formating partions..."
