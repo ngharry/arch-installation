@@ -41,7 +41,6 @@ chmod +x arch_install.sh
   * At least 20GB for virtual hard disk.
   * At least 1GB RAM
   * Under Settings > System > Motherboard, tick `Enable EFI (special OSes only).`
-*[TODO] Allow both MRB or UEFI to run this script.*
 4. Boot into live CD of Arch (be patient, it could take a while with a black screen).
 
 ## Installing
@@ -83,10 +82,23 @@ Do you want to create more user? (Y/N): N
 *If any errors occur during creating user, you will be asked for re-enter username and password.*
 *When you are asked if you want to create more user, type `Y` or `N` (in UPPER CASE).*
 
-*[TODO] Ask user if they want to create user or just want root.*
-
 If no error occurs, after finishing installation process, you can reboot your system.
 
-**[IMPORTANT]** After rebooting and playing around with your new system, shutdown and **REMEMBER** to remove disk from Virtual Drive under Settings > Storage > Attributes, click the disk icon next to `Optical Drive:` and choose `Remove Disk from Virtual Drive`. If you do not do this, next time the system will boot to live CD again.
+**[IMPORTANT]** After rebooting and playing around with your new system, shutdown and **REMEMBER to remove disk from Virtual Drive** under Settings > Storage > Attributes, click the disk icon next to `Optical Drive:` and choose `Remove Disk from Virtual Drive`. If you do not do this, next time the system will boot to live CD again.
 
-*[TODO] Post-installation (X Server, Desktop Environment, Display Manager, Web browser, Sublime Text, Theme, etc.).*
+## TODO List
+- [x] Install yaourt.
+- [ ] Allow both MRB and UEFI to run this script.
+- [ ] Ask if user want to create user or not.
+- [ ] Install X Server.
+- [ ] Install Desktop Environment and Display Manager.
+- [ ] Install themes.
+- [ ] Install Sublime Text.
+- [ ] Install necessary packages (web browser, git, etc.).
+- [ ] Install fonts.
+
+- [ ] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
+**Description:**
+With deepin and lightdm: the login screen stays white, after I managed to login successfully, a white blank screen shows up and I could not click anything.
+
+With KDE and SDDM: the mouse and touchpad(right-click) are stucked at 1 point.
