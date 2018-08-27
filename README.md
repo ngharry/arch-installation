@@ -20,8 +20,16 @@ This is a bash script used for automating Arch Linux installation process. *At t
   * Install yaourt.
   * Upgrade whole system.
 
-## Getting Started
+## Prerequisites
+1. A virtual environment (VirtualBox, VmWare, etc.). I am testing this script using VirtualBox.
+2. Download Arch OS ISO [here](https://mirror.aarnet.edu.au/pub/archlinux/iso/2018.08.01/archlinux-2018.08.01-x86_64.iso)
+3. Create a virtual machine. System recommended:
+  * At least 20GB for virtual hard disk.
+  * At least 1GB RAM.
+  * Under Settings > System > Motherboard, tick `Enable EFI (special OSes only).`.
+4. Boot into live CD of Arch (be patient, it could take a while with a black screen).
 
+## Installing
 Download `arch_install.sh` to the live Arch Linux environment:
 
 ```
@@ -34,17 +42,7 @@ Set execute permission for `arch_install.sh`:
 chmod +x arch_install.sh
 ```
 
-## Prerequisites
-1. A virtual environment (VirtualBox, VmWare, etc.). I am testing this script using VirtualBox.
-2. Download Arch OS ISO [here](https://mirror.aarnet.edu.au/pub/archlinux/iso/2018.08.01/archlinux-2018.08.01-x86_64.iso)
-3. Create a virtual machine. System recommended:
-  * At least 20GB for virtual hard disk.
-  * At least 1GB RAM
-  * Under Settings > System > Motherboard, tick `Enable EFI (special OSes only).`
-4. Boot into live CD of Arch (be patient, it could take a while with a black screen).
-
-## Installing
-Use `arch_install.sh` with execute permission for running installation:
+Run `arch_install.sh`:
 ```
 ./arch_install.sh
 ```
@@ -108,8 +106,16 @@ If no error occurs, after finishing installation process, you can reboot your sy
 
 - [ ] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
 
+## Bug Reporting
+
+- During installation process in VirtualBox, pressing `PrtScr` would lead to an error.
+[Add picture here.]
+
+- Arch does not work after installing KDE/SDDM or Deepin/lightdm.
+
 **Description:**
 
-With deepin and lightdm: the login screen stays white, after I managed to login successfully, a white blank screen shows up and I could not click anything.
+With deepin and lightdm: the login screen stays white, after I managed to login, a white blank screen shows up and I could not click anything.
+[Add picture here.]
 
 With KDE and SDDM: the mouse and touchpad(right-click) are stucked at 1 point.

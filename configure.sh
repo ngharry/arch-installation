@@ -70,7 +70,7 @@ set_user_password() {
 }
 
 install_necessary_packages() {
-	local PACKAGES='vim bash-completion zsh zsh-completions sudo'
+	local PACKAGES='vim bash-completion zsh zsh-completions sudo git'
 	pacman -Sy $PACKAGES
 }
 
