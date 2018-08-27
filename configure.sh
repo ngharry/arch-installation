@@ -75,6 +75,8 @@ install_necessary_packages() {
 }
 
 install_bootloader() {
+	# If directory /sys/firmware.efi exists, then the system uses UEFI
+	# Otherwise, it uses BIOS.
 	if [ -d /sys/firmware/efi ]; then
 		pacman -S grub efibootmgr
 

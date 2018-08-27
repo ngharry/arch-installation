@@ -26,8 +26,8 @@ This is a bash script used for automating Arch Linux installation process. *At t
 3. Create a virtual machine. System recommended:
   * At least 20GB for virtual hard disk.
   * At least 1GB RAM.
-  * Under Settings > System > Motherboard, tick `Enable EFI (special OSes only).`.
-4. Boot into live CD of Arch (be patient, it could take a while with a black screen).
+  * Under Settings > System > Motherboard, tick `Enable EFI (special OSes only).`, the system will boot using UEFI. Otherwise, it will use BIOS.
+4. Boot into live CD of Arch (with UEFI, be patient, it could take a while with a black screen).
 
 ## Installing
 Download `arch_install.sh` to the live Arch Linux environment:
