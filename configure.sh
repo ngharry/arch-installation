@@ -73,7 +73,7 @@ install_necessary_packages() {
 	local PACKAGES='vim bash-completion zsh zsh-completions sudo git '
 
 	read -p 'Do you want to install KDE? (Y/N) ' option
-	if [ "$option" == "Y" ]; then
+	if [ "$option" == "Y" ] || [ "$option" == "y" ]; then
 		PACKAGES+='plasma-meta kde-applications-meta'
 	fi
 	
@@ -230,10 +230,9 @@ configure() {
 
 
 	read -p 'Do you want to create user? (Y/N) ' option
-	if [ "$option" == "Y" ]; then
+	if [ "$option" == "Y" ] || [ "$option"=="y" ]; then
 		local option_user=Y
-		while [ "$option_user" == "Y" ]
-		do
+		while [ "$option_user" == "Y" ] || [ "$option_user" == "y" ]; do
 			echo "Creating user..."
 			create_user
 			read -p "Do you want to create more user? (Y/N): " option_user
