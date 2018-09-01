@@ -75,13 +75,24 @@ install_necessary_packages() {
 }
 
 install_bootloader() {
-	pacman -S grub efibootmgr
+	# If directory /sys/firmware.efi exists, then the system uses UEFI
+	# Otherwise, it uses BIOS.
+	if [ -d /sys/firmware/efi ]; then
+		pacman -S grub efibootmgr
 
-	grub-install --target=x86_64-efi --efi-directory=/boot
-	# if returned value of grub-install is not 0 then exit because of failure
-	if [ $? -ne 0 ]; then
-		echo "grub-install failed."
-		exit
+		grub-install --target=x86_64-efi --efi-directory=/boot
+		# if returned value of grub-install is not 0 then exit because of failure
+		if [ $? -ne 0 ]; then
+			echo "grub-install failed."
+			exit
+		fi
+	else
+		pacman -S grub
+		grub-install /dev/sda
+		if [ $? -ne 0 ]; then
+			echo "grub-install failed."
+			exit
+		fi
 	fi
 
 	grub-mkconfig -o /boot/grub/grub.cfg
@@ -92,6 +103,7 @@ install_bootloader() {
 	fi
 }
 
+# UEFI only
 # When installing arch linux on virtualbox, you just can boot installed 
 # Arch when reboot but can not when shut down. This is the bug patch
 virtualbox_bug_patch() {
@@ -203,10 +215,13 @@ configure() {
 	install_yaourt
 	echo "Finished."
 	
-	# fix bug for virtualbox only
-	echo "Fixing bug for virtualbox..."
-	virtualbox_bug_patch
-	echo "Finished."
+	# fix bug for virtualbox (UEFI only) 
+    if [ -d /sys/firmware/efi ]; then
+		echo "Fixing bug for virtualbox..."
+		virtualbox_bug_patch
+		echo "Finished."
+	fi
+
 
 	read -p 'Do you want to create user? (Y/N) ' option
 	if [ "$option" == "Y" ]; then

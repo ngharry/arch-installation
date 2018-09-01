@@ -21,36 +21,67 @@
 
 # This script will set up pre-installation for Arch (such as disk partioning,
 # disk mounting, or file system table generating,...)
-partion() {
-	# FAT32 size
-	local fat_size=$1
 
-	# Swap size
-	local swap_size=$2
+# Partion /dev/sda
+# Usage: 
+# UEFI: make_partion gpt 'ESP fat32' 1 512 $SWAP_SIZE
+# BIOS: make_partion msdos 'primary ext4' 3 $HOME_SIZE $SWAP_SIZE
+make_partion() {
+	# label for partions
+	local PARTION_LABEL=$1
 
-	# Calculate the exact disk space for swap and fat (in MB)
-	# the rest of disk space is taken as / space
-	# Usage: partion fat_size swap_size
-	# Ex: partion 512 2000 
+	# partion type
+	local PARTION_TYPE=$2
+
+	# set which partion is boot
+	local PARTION_BOOT_NUMBER=$3
+
+	# Specifies size of first partion and swap partion
+	local FIRST_PARTION_SIZE=$4
+	local SWAP_SIZE=$5
+
+	# Calculate exact value in MiB of disk partions
 	parted /dev/sda \
-		mklabel gpt \
-		mkpart ESP fat32 1MiB $(($fat_size + 1))MiB \
-		set 1 boot on \
-		mkpart primary linux-swap $(($fat_size + 2))MiB $(($swap_size + $fat_size + 2))MiB \
-		mkpart primary ext4 $(($swap_size + $fat_size + 3))MiB 100%
+		mklabel $PARTION_LABEL \
+		mkpart $PARTION_TYPE 1MiB $(($FIRST_PARTION_SIZE + 1))MiB \
+		mkpart primary linux-swap $(($FIRST_PARTION_SIZE + 2))MiB $(($SWAP_SIZE + $FIRST_PARTION_SIZE + 2))MiB \
+		mkpart primary ext4 $(($SWAP_SIZE + $FIRST_PARTION_SIZE + 3))MiB 100% \
+		set $PARTION_BOOT_NUMBER boot on
 }
 
+# Make filesystem
+# Usage:
+# UEFI: format_partion 'mkfs.fat -F32'
+# BIOS: format_partion mkfs.ext4
 format_partion() {
-	mkfs.fat -F32 /dev/sda1
+	local FS_TYPE=$1
+
+	$FS_TYPE /dev/sda1
 	mkfs.ext4 /dev/sda3
 	mkswap /dev/sda2
 	swapon /dev/sda2
 }
 
+# Mount file system
+# Usage:
+# UEFI: mount_fs /mnt/boot
+# BIOS: mount_fs /mnt/home
 mount_fs() {
+	local MOUNT_DIR=$1
+
 	mount /dev/sda3 /mnt
-	mkdir /mnt/boot
-	mount /dev/sda1 /mnt/boot
+	mkdir $MOUNT_DIR
+	mount /dev/sda1 $MOUNT_DIR
+}
+
+# Unmount file system
+# Usage:
+# UEFI: unmount_fs /mnt/boot
+# BIOS: unmount_fs /mnt/home
+unmount_fs() {
+	local UNMOUNT_DIR=$1
+	umount $UNMOUNT_DIR
+	umount /mnt
 }
 
 install_base() {
@@ -71,28 +102,38 @@ change_root() {
 
 	# Provide privilege for execute_script
 	chmod +x /mnt/$execute_script
+
 	# Run execute_script during chroot
 	arch-chroot /mnt ./$execute_script
-}
-
-unmount_disk() {
-	umount /mnt/boot
-	umount /mnt
 }
 
 setup() {
 	echo "Disk partioning..."
 	read -p "How much disk space do you want for swap? " SWAP_SIZE
-	partion 512 $SWAP_SIZE
-	echo "Finished."
 
-	echo "Formating partions..."
-	format_partion
-	echo "Finished."
+	if [ -d /sys/firmware/efi ]; then
+		make_partion gpt 'ESP fat32' 1 512 $SWAP_SIZE
+		echo "Finished partioning."
 
-	echo "Mounting file system..."
-	mount_fs
-	echo "Finished."
+		echo "Making file system..."
+		format_partion 'mkfs.fat -F32'
+		echo "Finished making file system."
+
+		echo "Mounting file system..."
+		mount_fs /mnt/boot
+		echo "Finished mounting file system."
+	else
+		read -p "How much disk space do you want for /home? " HOME_SIZE
+		make_partion msdos 'primary ext4' 3 $HOME_SIZE $SWAP_SIZE
+
+		echo "Making file system..."
+		format_partion mkfs.ext4
+		echo "Finished making file system."
+
+		echo "Mounting file system..."
+		mount_fs /mnt/home
+		echo "Finished mounting file system."
+	fi
 
 	echo "Installing base and base devel..."
 	install_base
@@ -101,9 +142,6 @@ setup() {
 	echo "Generating file system table..."
 	generate_fstab
 	echo "Finished."
-
-	curl $configure_sh_link > /mnt/$CONF_NAME
-	change_root $CONF_NAME
 }
 
 main() {
@@ -111,10 +149,16 @@ main() {
 	local CONF_NAME=configure.sh
 
 	# change branch when downloading configure.sh from github
-	local BRANCH=master
-	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/$BRANCH/configure.sh
+	local BRANCH=uefi_bios
+	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/$BRANCH/$CONF_NAME
 	
 	setup
+
+	# Download configure.sh for configuring system
+	curl $configure_sh_link > /mnt/$CONF_NAME
+
+	# Execute configure.sh during change root
+	change_root $CONF_NAME
 
 	# Check if failed or not during chroot
 	# if succeed, /mnt/$CONF_NAME would not exist.
@@ -123,7 +167,11 @@ main() {
 		exit
 	else
     	echo 'Unmounting filesystems'
-    	unmount_disk
+    	if [ -d /sys/firmware/efi ]; then
+    		unmount_fs /mnt/boot
+    	else
+    		unmount_fs /mnt/home
+    	fi
     	echo 'Finished. You should reboot system for applying changes.'
 	fi
 }
