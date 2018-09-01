@@ -215,7 +215,11 @@ main() {
 		exit
 	else
     	echo 'Unmounting filesystems'
-    	unmount_disk
+    	if [ -d /sys/firmware/efi ]; then
+    		unmount_disk /mnt/boot
+    	else
+    		unmount_disk /mnt/home
+    	fi
     	echo 'Finished. You should reboot system for applying changes.'
 	fi
 }
