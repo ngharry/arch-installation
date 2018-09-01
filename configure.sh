@@ -103,6 +103,7 @@ install_bootloader() {
 	fi
 }
 
+# UEFI only
 # When installing arch linux on virtualbox, you just can boot installed 
 # Arch when reboot but can not when shut down. This is the bug patch
 virtualbox_bug_patch() {
@@ -214,10 +215,13 @@ configure() {
 	install_yaourt
 	echo "Finished."
 	
-	# fix bug for virtualbox only
-	echo "Fixing bug for virtualbox..."
-	virtualbox_bug_patch
-	echo "Finished."
+	# fix bug for virtualbox (UEFI only) 
+    if [ -d /sys/firmware/efi ]; then
+		echo "Fixing bug for virtualbox..."
+		virtualbox_bug_patch
+		echo "Finished."
+	fi
+
 
 	read -p 'Do you want to create user? (Y/N) ' option
 	if [ "$option" == "Y" ]; then

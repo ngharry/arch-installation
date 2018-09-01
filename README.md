@@ -3,20 +3,20 @@
 This is a bash script used for automating Arch Linux installation process. *At the time, this script is just used for Arch Linux in VirtualBox.*
 
 ## What can this script do? 
-- Disk partion (FAT32, swap and /).
+- Disk partion (in both UEFI and BIOS).
 - Make file system.
 - Mount install disk.
 - Install base and base devel.
 - Generate file system table
 - `arch-chroot` and execute configuration script which can do the following:
-  * Set up time zone.
-  * Set up language.
+  * Set up time zone (Australia/Adelaide)
+  * Set up language (en_US.UTF-8)
   * Set up host name.
   * Install networkmanager and enable NetworkManager.service.
   * Set root password.
   * Create users.
   * Install boot loader.
-  * Install vim, zsh, bash-completion, sudo and zsh-completion.
+  * Install vim, zsh, bash-completion, sudo, zsh-completion, git.
   * Install yaourt.
   * Upgrade whole system.
 
@@ -24,9 +24,9 @@ This is a bash script used for automating Arch Linux installation process. *At t
 1. A virtual environment (VirtualBox, VmWare, etc.). I am testing this script using VirtualBox.
 2. Download Arch OS ISO [here](https://mirror.aarnet.edu.au/pub/archlinux/iso/2018.08.01/archlinux-2018.08.01-x86_64.iso)
 3. Create a virtual machine. System recommended:
-  * At least 20GB for virtual hard disk.
-  * At least 1GB RAM.
-  * Under Settings > System > Motherboard, tick `Enable EFI (special OSes only).`, the system will boot using UEFI. Otherwise, it will use BIOS.
+  * At least 10GB for virtual hard disk.
+  * At least 512MB RAM.
+  * If you want to use UEFI, under Settings > System > Motherboard, tick `Enable EFI (special OSes only).`. Otherwise, the system will use BIOS.
 4. Boot into live CD of Arch (with UEFI, be patient, it could take a while with a black screen).
 
 ## Installing
@@ -50,6 +50,11 @@ Run `arch_install.sh`:
 When you are asked for swap disk size, enter swap size in MB. Example below illustrates creating 2GB swap:
 ```
 How much disk space do you want for swap? 2000
+```
+
+For BIOS system, you will be asked for specifying /home size. Example:
+```
+How much disk space do you want for /home? 5000
 ```
 
 You will be asked for entering host name, root password, creating users. For example:
@@ -91,11 +96,13 @@ Do you want to create more user? (Y/N): N
 
 If no error occurs, after finishing installation process, you can reboot your system.
 
+
+## UEFI Only
 **[IMPORTANT]** After rebooting and playing around with your new system, shutdown and **REMEMBER to remove disk from Virtual Drive** under Settings > Storage > Attributes, click the disk icon next to `Optical Drive:` and choose `Remove Disk from Virtual Drive`. If you do not do this, next time the system will boot to live CD again.
 
 ## TODO List
 - [x] Install yaourt.
-- [ ] Allow both BIOS and UEFI to run this script.
+- [x] Allow both BIOS and UEFI to run this script.
 - [x] Ask if user want to create user or not.
 - [ ] Install X Server.
 - [ ] Install Desktop Environment and Display Manager.
