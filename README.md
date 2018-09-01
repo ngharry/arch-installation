@@ -94,6 +94,12 @@ Do you want to create more user? (Y/N): N
 *If any errors occur during creating user, you will be asked for re-enter username and password.*
 *When you are asked if you want to create more user, type `Y` or `N` (in UPPER CASE).*
 
+
+You will be asked if you want to install KDE (my favorite DE):
+```
+Do you want to install KDE? (Y/N) Y
+```
+
 If no error occurs, after finishing installation process, you can reboot your system.
 
 

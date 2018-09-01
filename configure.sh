@@ -70,7 +70,13 @@ set_user_password() {
 }
 
 install_necessary_packages() {
-	local PACKAGES='vim bash-completion zsh zsh-completions sudo git'
+	local PACKAGES='vim bash-completion zsh zsh-completions sudo git '
+
+	read -p 'Do you want to install KDE? (Y/N) ' option
+	if [ "$option" == "Y" ]; then
+		PACKAGES+='plasma-meta kde-applications-meta'
+	fi
+	
 	pacman -Sy $PACKAGES
 }
 
