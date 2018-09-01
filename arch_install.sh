@@ -22,6 +22,19 @@
 # This script will set up pre-installation for Arch (such as disk partioning,
 # disk mounting, or file system table generating,...)
 
+make_partion() {
+	local PARTION_LABEL=$1
+	local PARTION_TYPE=$2
+	local PARTION_BOOT_NUMBER=$3
+	local FIRST_PARTION_SIZE=$4
+	local SWAP_SIZE=$5
+	parted /dev/sda \
+		mklabel $PARTION_LABEL \
+		mkpart $PARTION_TYPE 1MiB $(($FIRST_PARTION_SIZE + 1))MiB \
+		mkpart primary linux-swap $(($FIRST_PARTION_SIZE + 2))MiB $(($SWAP_SIZE + $FIRST_PARTION_SIZE + 2))MiB \
+		mkpart primary ext4 $(($SWAP_SIZE + $FIRST_PARTION_SIZE + 3))MiB 100% \
+		set $PARTION_BOOT boot on
+}
 # disk partioning for UEFI system
 gpt_partion() {
 	# FAT32 size
@@ -63,28 +76,66 @@ mbr_partion() {
 }
 
 format_partion() {
-	if [ -d /sys/firmware/efi ]; then	
-		mkfs.fat -F32 /dev/sda1
-	else 
-		mkfs.ext4 /dev/sda1
-	fi
-
+	local FS_TYPE=$1
+	$FS_TYPE /dev/sda1
 	mkfs.ext4 /dev/sda3
 	mkswap /dev/sda2
 	swapon /dev/sda2
 }
 
+# format_partion() {
+# 	if [ -d /sys/firmware/efi ]; then	
+# 		mkfs.fat -F32 /dev/sda1
+# 	else 
+# 		mkfs.ext4 /dev/sda1
+# 	fi
+
+# 	mkfs.ext4 /dev/sda3
+# 	mkswap /dev/sda2
+# 	swapon /dev/sda2
+# }
+
 mount_fs() {
-	if [ -d /sys/firmware/efi ]; then
-		mount /dev/sda3 /mnt
-		mkdir /mnt/boot
-		mount /dev/sda1 /mnt/boot
-	else
-		mount /dev/sda3 /mnt
-		mkdir /mnt/home
-		mount /dev/sda1 /mnt/home
-	fi
+	local MOUNT_DIR=$1
+
+	# if [ -d /sys/firmware/efi ]; then
+	# 	MOUNT_DIR=/mnt/boot
+	# else
+	# 	MOUNT_DIR=/mnt/home
+	# fi
+
+	mount /dev/sda3 /mnt
+	mkdir $MOUNT_DIR
+	mount /dev/sda1 $MOUNT_DIR
 }
+
+# mount_fs() {
+# 	if [ -d /sys/firmware/efi ]; then
+# 		MOUNT_DIR=/mnt/boot
+# 	else
+# 		MOUNT_DIR=/mnt/home
+# 	fi
+
+# 	mount /dev/sda3 /mnt
+# 	mkdir $MOUNT_DIR
+# 	mount /dev/sda1 $MOUNT_DIR
+# }
+
+unmount_disk() {
+	local UNMOUNT_DIR=$1
+	umount $UNMOUNT_DIR
+	umount /mnt
+}
+
+# unmount_disk() {
+
+# 	if [ -d /sys/firmware/efi ]; then
+# 		umount /mnt/boot
+# 	else
+# 		umount /mnt/home
+# 	fi
+# 	umount /mnt
+# }
 
 install_base() {
 	# set mirror
@@ -108,43 +159,43 @@ change_root() {
 	arch-chroot /mnt ./$execute_script
 }
 
-unmount_disk() {
-	if [ -d /sys/firmware/efi ]; then
-		umount /mnt/boot
-	else
-		umount /mnt/home
-	fi
-	umount /mnt
-}
-
 setup() {
 	echo "Disk partioning..."
 	read -p "How much disk space do you want for swap? " SWAP_SIZE
+	# if [ -d /sys/firmware/efi ]; then
+	# 	gpt_partion 512 $SWAP_SIZE
+	# else
+	# 	mbr_partion 5000 $SWAP_SIZE
+	# fi
+	# echo "Finished."
+
+	# echo "Formating partions..."
+	# format_partion
+	# echo "Finished."
+
+	# echo "Mounting file system..."
+	# mount_fs
+	# echo "Finished."
 	if [ -d /sys/firmware/efi ]; then
-		gpt_partion 512 $SWAP_SIZE
+		make_partion gpt 'ESP fat32' 1 512 $SWAP_SIZE
+		format_partion 'mkfs.fat -F32'
+		mount_fs /mnt/boot
 	else
-		mbr_partion 5000 $SWAP_SIZE
+		make_partion msdos 'primary ext4' 3 5000 $SWAP_SIZE
+		format_partion mkfs.ext4
+		mount_fs /mnt/home
 	fi
-	echo "Finished."
 
-	echo "Formating partions..."
-	format_partion
-	echo "Finished."
+	# echo "Installing base and base devel..."
+	# install_base
+	# echo "Finished."
 
-	echo "Mounting file system..."
-	mount_fs
-	echo "Finished."
+	# echo "Generating file system table..."
+	# generate_fstab
+	# echo "Finished."
 
-	echo "Installing base and base devel..."
-	install_base
-	echo "Finished."
-
-	echo "Generating file system table..."
-	generate_fstab
-	echo "Finished."
-
-	curl $configure_sh_link > /mnt/$CONF_NAME
-	change_root $CONF_NAME
+	# curl $configure_sh_link > /mnt/$CONF_NAME
+	# change_root $CONF_NAME
 }
 
 main() {
