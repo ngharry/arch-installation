@@ -33,7 +33,7 @@ make_partion() {
 		mkpart $PARTION_TYPE 1MiB $(($FIRST_PARTION_SIZE + 1))MiB \
 		mkpart primary linux-swap $(($FIRST_PARTION_SIZE + 2))MiB $(($SWAP_SIZE + $FIRST_PARTION_SIZE + 2))MiB \
 		mkpart primary ext4 $(($SWAP_SIZE + $FIRST_PARTION_SIZE + 3))MiB 100% \
-		set $PARTION_BOOT boot on
+		set $PARTION_BOOT_NUMBER boot on
 }
 # disk partioning for UEFI system
 gpt_partion() {
