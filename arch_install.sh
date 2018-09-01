@@ -102,6 +102,7 @@ change_root() {
 
 	# Provide privilege for execute_script
 	chmod +x /mnt/$execute_script
+
 	# Run execute_script during chroot
 	arch-chroot /mnt ./$execute_script
 }
@@ -167,9 +168,9 @@ main() {
 	else
     	echo 'Unmounting filesystems'
     	if [ -d /sys/firmware/efi ]; then
-    		unmount_disk /mnt/boot
+    		unmount_fs /mnt/boot
     	else
-    		unmount_disk /mnt/home
+    		unmount_fs /mnt/home
     	fi
     	echo 'Finished. You should reboot system for applying changes.'
 	fi
