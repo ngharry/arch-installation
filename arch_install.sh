@@ -149,7 +149,7 @@ main() {
 	local CONF_NAME=configure.sh
 
 	# change branch when downloading configure.sh from github
-	local BRANCH=uefi_bios
+	local BRANCH=master
 	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/$BRANCH/$CONF_NAME
 	
 	setup

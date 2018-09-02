@@ -69,15 +69,115 @@ set_user_password() {
 	done
 }
 
-install_necessary_packages() {
-	local PACKAGES='vim bash-completion zsh zsh-completions sudo git '
+install_sublime() {
+	curl -O https://download.sublimetext.com/sublimehq-pub.gpg &&
+	sudo pacman-key --add sublimehq-pub.gpg && 
+	sudo pacman-key --lsign-key 8A8F901A && 
+	rm sublimehq-pub.gpg
 
-	read -p 'Do you want to install KDE? (Y/N) ' option
-	if [ "$option" == "Y" ] || [ "$option" == "y" ]; then
-		PACKAGES+='plasma-meta kde-applications-meta'
+	echo -e "\n[sublime-text]\nServer = https://download.sublimetext.com/arch/stable/x86_64" | 
+	sudo tee -a /etc/pacman.conf
+
+	sudo pacman -Syu sublime-text
+}
+
+install_kde() {
+	local PACKAGES='plasma-meta kde-applications-meta'
+	pacman -S $PACKAGES
+
+	cat > ~/.xinitrc <<"EOF"
+#!/bin/sh
+userresources=$HOME/.Xresources
+usermodmap=$HOME/.Xmodmap
+sysresources=/etc/X11/xinit/.Xresources
+sysmodmap=/etc/X11/xinit/.Xmodmap
+
+# merge in defaults and keymaps
+if [ -f $sysresources ]; then
+    xrdb -merge $sysresources
+fi
+
+if [ -f $sysmodmap ]; then
+    xmodmap $sysmodmap
+fi
+
+if [ -f "$userresources" ]; then
+    xrdb -merge "$userresources"
+fi
+
+if [ -f "$usermodmap" ]; then
+    xmodmap "$usermodmap"
+fi
+
+# start some nice programs
+if [ -d /etc/X11/xinit/xinitrc.d ] ; then
+ for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+  [ -x "$f" ] && . "$f"
+ done
+ unset f
+fi
+
+exec startkde
+#twm &
+#xclock -geometry 50x50-1+1 &
+#xterm -geometry 80x50+494+51 &
+#xterm -geometry 80x20+494-0 &
+#exec xterm -geometry 80x66+0+0 -name login
+EOF
+}
+
+# Manual Installation
+# - Open /etc/pacman.conf
+# - Append 
+#   >[arcolinux_repo_iso]
+#   >SigLevel = Never
+#   >Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
+#   to the end of /etc/pacman.conf
+# - Update system `pacman -Sy`
+# - Install yaourt and package-query `pacman -S yaourt package-query`
+# - After finish installation, comment out those appended lines above. We dont
+#   want trash packages appear in our system.
+#
+# Below is the automatic installation 
+install_yaourt() {
+	# To avoid append the content multiple times
+
+	# Find if [arcolinux_repo_iso] is in /etc/pacman.conf
+	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
+	# if not found, then append the content below to /etc/pacman.conf
+	if [ $? -ne 0 ]; then
+		cat >> /etc/pacman.conf <<"EOF"
+[arcolinux_repo_iso]
+SigLevel = Never
+Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
+EOF
 	fi
-	
-	pacman -Sy $PACKAGES
+
+	pacman -Sy
+	pacman -S yaourt package-query
+
+	# To comment out the appended lines above
+
+	# Find [arcolinux_repo_iso] again
+	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
+	# If found, then comment out the appended lines above
+	if [ $? -eq 0 ]; then
+		# Get total number of lines in /etc/pacman.conf
+		local NUMLINES=$(wc -l < /etc/pacman.conf)
+
+		# This command means replace any empty character by # from 
+		# line NUMLINES - 2 to the end of file.
+		#
+		# Also means comment out the last 3 lines of /etc/pacman.conf
+		sed -i "$(($NUMLINES-2)),\$s/^/#/" /etc/pacman.conf
+	fi
+}
+
+install_necessary_packages() {
+	local PACKAGES='vim bash-completion zsh zsh-completions git xorg-server xorg-xinit xorg-apps xterm firefox'
+	pacman -Syu $PACKAGES
+	install_yaourt
+	install_sublime
 }
 
 install_bootloader() {
@@ -146,52 +246,6 @@ create_user() {
 		echo "Finished."
 }
 
-# Manual Installation
-# - Open /etc/pacman.conf
-# - Append 
-#   >[arcolinux_repo_iso]
-#   >SigLevel = Never
-#   >Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
-#   to the end of /etc/pacman.conf
-# - Update system `pacman -Sy`
-# - Install yaourt and package-query `pacman -S yaourt package-query`
-# - After finish installation, comment out those appended lines above. We dont
-#   want trash packages appear in our system.
-#
-# Below is the automatic installation 
-install_yaourt() {
-	# To avoid append the content multiple times
-
-	# Find if [arcolinux_repo_iso] is in /etc/pacman.conf
-	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
-	# if not found, then append the content below to /etc/pacman.conf
-	if [ $? -ne 0 ]; then
-		cat >> /etc/pacman.conf <<"EOF"
-[arcolinux_repo_iso]
-SigLevel = Never
-Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
-EOF
-	fi
-
-	pacman -Sy
-	pacman -S yaourt package-query
-
-	# To comment out the appended lines above
-
-	# Find [arcolinux_repo_iso] again
-	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
-	# If found, then comment out the appended lines above
-	if [ $? -eq 0 ]; then
-		# Get total number of lines in /etc/pacman.conf
-		local NUMLINES=$(wc -l < /etc/pacman.conf)
-
-		# This command means replace any empty character by # from 
-		# line NUMLINES - 2 to the end of file.
-		#
-		# Also means comment out the last 3 lines of /etc/pacman.conf
-		sed -i "$(($NUMLINES-2)),\$s/^/#/" /etc/pacman.conf
-	fi
-}
 
 configure() {
 	echo "Setting timezone..."
@@ -218,8 +272,11 @@ configure() {
 
 	echo "Installing necessary packages..."
 	install_necessary_packages
-	install_yaourt
-	echo "Finished."
+
+	read -p "Do you want to install KDE? (Y/N) " option
+	if [ "$option" == "Y" ] || [ "$option" == "y" ]; then
+		install_kde
+	fi
 	
 	# fix bug for virtualbox (UEFI only) 
     if [ -d /sys/firmware/efi ]; then
@@ -227,7 +284,6 @@ configure() {
 		virtualbox_bug_patch
 		echo "Finished."
 	fi
-
 
 	read -p 'Do you want to create user? (Y/N) ' option
 	if [ "$option" == "Y" ] || [ "$option"=="y" ]; then
