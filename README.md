@@ -110,15 +110,16 @@ If no error occurs, after finishing installation process, you can reboot your sy
 - [x] Install yaourt.
 - [x] Allow both BIOS and UEFI to run this script.
 - [x] Ask if user want to create user or not.
-- [ ] Install X Server.
-- [ ] Install Desktop Environment and Display Manager.
+- [x] Install X Server.
+- [x] Install Desktop Environment and Display Manager.
 - [ ] Install themes.
-- [ ] Install Sublime Text.
-- [ ] Install necessary packages (web browser, git, etc.).
+- [x] Install Sublime Text.
+- [x] Install necessary packages (web browser, git, etc.).
 - [ ] Install fonts.
-
-- [ ] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
-
+- [ ] Allow user to choose between different Desktop Environment (GNOME, KDE, Deepin, Unity,...)/
+- [ ] Configure full screen tty console in Arch (modify /etc/default/grub and change GRUB_CMDLINE_LINUX_DEFAULT="quiet video=1920x1080" and grub-mkconfig -o /boot/grub/grub.cfg)
+- [x] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
+- [ ] Explain the causes.
 ## Bug Reporting
 
 - During installation process in VirtualBox, pressing `PrtScr` would lead to an error.
