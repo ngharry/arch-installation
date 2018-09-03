@@ -119,17 +119,23 @@ If no error occurs, after finishing installation process, you can reboot your sy
 - [ ] Allow user to choose between different Desktop Environment (GNOME, KDE, Deepin, Unity,...)/
 - [ ] Configure full screen tty console in Arch (modify /etc/default/grub and change GRUB_CMDLINE_LINUX_DEFAULT="quiet video=1920x1080" and grub-mkconfig -o /boot/grub/grub.cfg)
 - [x] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
-- [ ] Explain the causes.
+
 ## Bug Reporting
 
 - During installation process in VirtualBox, pressing `PrtScr` would lead to an error.
 [Add picture here.]
 
+**Solved**
 - Arch does not work after installing KDE/SDDM or Deepin/lightdm.
 
-**Description:**
+*Description:*
 
 With deepin and lightdm: the login screen stays white, after I managed to login, a white blank screen shows up and I could not click anything.
 [Add picture here.]
 
 With KDE and SDDM: the mouse and touchpad(right-click) are stucked at 1 point.
+
+*Solution:*
+Installing plasma-meta and kde-applications-meta will solve this problem.
+
+When I installed KDE, I just install plasma in the form of a group, which did not have enough dependencies for installing KDE.
