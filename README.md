@@ -16,7 +16,7 @@ This is a bash script used for automating Arch Linux installation process. *At t
   * Set root password.
   * Create users.
   * Install boot loader.
-  * Install vim, zsh, bash-completion, sudo, zsh-completion, git.
+  * Install vim, zsh, git, X server
   * Install yaourt.
   * Upgrade whole system.
 
@@ -94,12 +94,6 @@ Do you want to create more user? (Y/N): N
 *If any errors occur during creating user, you will be asked for re-enter username and password.*
 *When you are asked if you want to create more user, type `Y` or `N` (in UPPER CASE).*
 
-
-You will be asked if you want to install KDE (my favorite DE):
-```
-Do you want to install KDE? (Y/N) Y
-```
-
 If no error occurs, after finishing installation process, you can reboot your system.
 
 
@@ -111,21 +105,33 @@ If no error occurs, after finishing installation process, you can reboot your sy
 - [x] Allow both BIOS and UEFI to run this script.
 - [x] Ask if user want to create user or not.
 - [x] Install X Server.
-- [x] Install Desktop Environment and Display Manager.
-- [ ] Install themes.
 - [x] Install Sublime Text.
 - [x] Install necessary packages (web browser, git, etc.).
 - [ ] Install fonts.
-- [ ] Allow user to choose between different Desktop Environment (GNOME, KDE, Deepin, Unity,...)/
-- [ ] Configure full screen tty console in Arch (modify /etc/default/grub and change GRUB_CMDLINE_LINUX_DEFAULT="quiet video=1920x1080" and grub-mkconfig -o /boot/grub/grub.cfg)
+- [ ] Allow user to choose between different Desktop Environment (GNOME, KDE, Deepin, Unity,...).
+- [ ] Configure full screen tty console in Arch.
 - [x] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
+- [ ] Copy, paste, share clipboard from guest to host.
 
 ## Bug Reporting
 
 - During installation process in VirtualBox, pressing `PrtScr` would lead to an error.
 [Add picture here.]
 
+- Error: `invalid or corrupted package (PGP signature)` when installing some packages.
+
 **Solved**
+
+Install `archlinux-keyring` and update your system.
+
+```
+sudo pacman -S archlinux-keyring
+sudo pacman -Syu
+``` 
+
+and install your desire packages again.
+
+
 - Arch does not work after installing KDE/SDDM or Deepin/lightdm.
 
 *Description:*
@@ -135,7 +141,16 @@ With deepin and lightdm: the login screen stays white, after I managed to login,
 
 With KDE and SDDM: the mouse and touchpad(right-click) are stucked at 1 point.
 
-*Solution:*
+**Solved**
 Installing plasma-meta and kde-applications-meta will solve this problem.
 
 When I installed KDE, I just install plasma in the form of a group, which did not have enough dependencies for installing KDE.
+
+
+- Can not launch application without Desktop Environment (DE) when setting full-screen TTY.
+
+*Description:*
+
+I managed to set TTY to full screen by modify `/etc/default/grub` and change `GRUB_CMDLINE_LINUX_DEFAULT="quiet"` to `GRUB_CMDLINE_LINUX_DEFAULT="quiet video=1920x1080"` and then `grub-mkconfig -o /boot/grub/grub.cfg`. However, when I try to launch application without DE, it seems to have some problems with X server. Eg: `firefox` can not start in full-screen even though I use `exec firefox 1920x1080+0+0` in `/etc/X11/xinit/xinitrc`.
+
+When I delete `video=1920x1080`, then `grub-mkconfig -o /boot/grub/grub.cfg`, things works well again.
