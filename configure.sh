@@ -57,18 +57,6 @@ configure_network() {
 	pacman -S networkmanager && systemctl enable NetworkManager
 }
 
-set_user_password() {
-	local USER=$1
-
-	# status indicates if passwd succeed or not
-	local status=1
-	while [ $status -ne 0 ]
-	do
-		passwd $USER 
-		status=$?
-	done
-}
-
 install_sublime() {
 	curl -O https://download.sublimetext.com/sublimehq-pub.gpg &&
 	sudo pacman-key --add sublimehq-pub.gpg && 
@@ -79,51 +67,6 @@ install_sublime() {
 	sudo tee -a /etc/pacman.conf
 
 	sudo pacman -Syu sublime-text
-}
-
-install_kde() {
-	local PACKAGES='plasma-meta kde-applications-meta'
-	pacman -S $PACKAGES
-
-	cat > ~/.xinitrc <<"EOF"
-#!/bin/sh
-userresources=$HOME/.Xresources
-usermodmap=$HOME/.Xmodmap
-sysresources=/etc/X11/xinit/.Xresources
-sysmodmap=/etc/X11/xinit/.Xmodmap
-
-# merge in defaults and keymaps
-if [ -f $sysresources ]; then
-    xrdb -merge $sysresources
-fi
-
-if [ -f $sysmodmap ]; then
-    xmodmap $sysmodmap
-fi
-
-if [ -f "$userresources" ]; then
-    xrdb -merge "$userresources"
-fi
-
-if [ -f "$usermodmap" ]; then
-    xmodmap "$usermodmap"
-fi
-
-# start some nice programs
-if [ -d /etc/X11/xinit/xinitrc.d ] ; then
- for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
-  [ -x "$f" ] && . "$f"
- done
- unset f
-fi
-
-exec startkde
-#twm &
-#xclock -geometry 50x50-1+1 &
-#xterm -geometry 80x50+494+51 &
-#xterm -geometry 80x20+494-0 &
-#exec xterm -geometry 80x66+0+0 -name login
-EOF
 }
 
 # Manual Installation
@@ -174,10 +117,12 @@ EOF
 }
 
 install_necessary_packages() {
-	local PACKAGES='vim bash-completion zsh zsh-completions git xorg-server xorg-xinit xorg-apps xterm firefox'
+	local PACKAGES='vim zsh zsh-completions git xorg-server xorg-xinit xorg-apps'
 	pacman -Syu $PACKAGES
+
 	install_yaourt
 	install_sublime
+	configure_network
 }
 
 install_bootloader() {
@@ -209,14 +154,6 @@ install_bootloader() {
 	fi
 }
 
-# UEFI only
-# When installing arch linux on virtualbox, you just can boot installed 
-# Arch when reboot but can not when shut down. This is the bug patch
-virtualbox_bug_patch() {
-	mkdir /boot/EFI/boot
-	cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
-}
-
 create_user() {
 	local status=1
 
@@ -246,8 +183,30 @@ create_user() {
 		echo "Finished."
 }
 
+set_user_password() {
+	local USER=$1
 
-configure() {
+	# status indicates if passwd succeed or not
+	local status=1
+	while [ $status -ne 0 ]
+	do
+		passwd $USER 
+		status=$?
+	done
+}
+
+# UEFI only
+# When installing arch linux on virtualbox, you just can boot installed 
+# Arch when reboot but can not when shut down. This is the bug patch
+virtualbox_bug_patch() {
+	mkdir /boot/EFI/boot
+	cp /boot/EFI/arch/grubx64.efi /boot/EFI/boot/bootx64.efi
+}
+
+main() {
+	local TIMEZONE=Australia/Adelaide
+	local LANGUAGE='en_US.UTF-8'
+	
 	echo "Setting timezone..."
 	set_timezone $TIMEZONE
 	echo "Time zone is set to $TIMEZONE."
@@ -260,10 +219,6 @@ configure() {
 	set_hostname
 	echo "Changed hostname successfully."
 
-	echo "Configuring network..."
-	configure_network
-	echo "Finished."
-
 	echo "Setting root password..."
 	set_user_password root
 
@@ -272,11 +227,6 @@ configure() {
 
 	echo "Installing necessary packages..."
 	install_necessary_packages
-
-	read -p "Do you want to install KDE? (Y/N) " option
-	if [ "$option" == "Y" ] || [ "$option" == "y" ]; then
-		install_kde
-	fi
 	
 	# fix bug for virtualbox (UEFI only) 
     if [ -d /sys/firmware/efi ]; then
@@ -297,13 +247,6 @@ configure() {
 
 	pacman -Syu
 	echo "Full system upgraded."
-}
-
-main() {
-	local TIMEZONE=Australia/Adelaide
-	local LANGUAGE='en_US.UTF-8'
-	
-	configure
 
 	# remove configure.sh in /mnt for indicates error in uefi_install.sh
 	# if configure.sh still exists then there must be errors somewhere
