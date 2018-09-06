@@ -107,7 +107,7 @@ If no error occurs, after finishing installation process, you can reboot your sy
 - [x] Install X Server.
 - [x] Install Sublime Text.
 - [x] Install necessary packages (web browser, git, etc.).
-- [ ] Install fonts.
+- [x] Install fonts.
 - [ ] Allow user to choose between different Desktop Environment (GNOME, KDE, Deepin, Unity,...).
 - [ ] Configure full screen tty console in Arch.
 - [x] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.

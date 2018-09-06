@@ -52,11 +52,6 @@ set_hostname() {
 	echo $HOSTNAME > /etc/hostname
 }
 
-configure_network() {
-	# install network
-	pacman -S networkmanager && systemctl enable NetworkManager
-}
-
 install_sublime() {
 	curl -O https://download.sublimetext.com/sublimehq-pub.gpg &&
 	sudo pacman-key --add sublimehq-pub.gpg && 
@@ -116,14 +111,26 @@ EOF
 	fi
 }
 
+install_font() {
+	# Automatically pass input to install fonts
+
+	# Install first font yaourt found (Abode Source Code)
+	echo "1
+	y" | yaourt font
+}
+
 install_necessary_packages() {
 	local PACKAGES='vim zsh zsh-completions git xorg-server xorg-xinit xorg-apps'
 	pacman -Syu $PACKAGES
 
 	install_yaourt
 	install_sublime
-	configure_network
+	install_font
+
+	# Configure network
+	pacman -S networkmanager && systemctl enable NetworkManager
 }
+
 
 install_bootloader() {
 	# If directory /sys/firmware.efi exists, then the system uses UEFI
