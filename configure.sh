@@ -117,6 +117,8 @@ install_font() {
 	# Install first font yaourt found (Abode Source Code)
 	echo "1
 	y" | yaourt font
+
+	pacman -Sy ttf-hack
 }
 
 install_necessary_packages() {
