@@ -120,37 +120,39 @@ If no error occurs, after finishing installation process, you can reboot your sy
 
 - Error: `invalid or corrupted package (PGP signature)` when installing some packages.
 
-**Solved**
+  **Solved**
 
-Install `archlinux-keyring` and update your system.
+  Install `archlinux-keyring` and update your system.
 
-```
-sudo pacman -S archlinux-keyring
-sudo pacman -Syu
-``` 
+  ```
+  sudo pacman -S archlinux-keyring
+  sudo pacman -Syu
+  ``` 
 
-and install your desire packages again.
+  and install your desire packages again.
 
 
 - Arch does not work after installing KDE/SDDM or Deepin/lightdm.
 
-*Description:*
+  *Description:*
 
-With deepin and lightdm: the login screen stays white, after I managed to login, a white blank screen shows up and I could not click anything.
-[Add picture here.]
+  With deepin and lightdm: the login screen stays white, after I managed to login, a white blank screen shows up and I could not click anything.
 
-With KDE and SDDM: the mouse and touchpad(right-click) are stucked at 1 point.
+  [Add picture here.]
 
-**Solved**
-Installing plasma-meta and kde-applications-meta will solve this problem.
+  With KDE and SDDM: the mouse and touchpad(right-click) are stucked at 1 point.
 
-When I installed KDE, I just install plasma in the form of a group, which did not have enough dependencies for installing KDE.
+  **Solved**
+
+  Installing plasma-meta and kde-applications-meta will solve this problem.
+
+  When I installed KDE, I just install plasma in the form of a group, which did not have enough dependencies for installing KDE.
 
 
 - Can not launch application without Desktop Environment (DE) when setting full-screen TTY.
 
-*Description:*
+  *Description:*
 
-I managed to set TTY to full screen by modify `/etc/default/grub` and change `GRUB_CMDLINE_LINUX_DEFAULT="quiet"` to `GRUB_CMDLINE_LINUX_DEFAULT="quiet video=1920x1080"` and then `grub-mkconfig -o /boot/grub/grub.cfg`. However, when I try to launch application without DE, it seems to have some problems with X server. Eg: `firefox` can not start in full-screen even though I use `exec firefox 1920x1080+0+0` in `/etc/X11/xinit/xinitrc`.
+  I managed to set TTY to full screen by modify `/etc/default/grub` and change `GRUB_CMDLINE_LINUX_DEFAULT="quiet"` to `GRUB_CMDLINE_LINUX_DEFAULT="quiet video=1920x1080"` and then `grub-mkconfig -o /boot/grub/grub.cfg`. However, when I try to launch application without DE, it seems to have some problems with X server. Eg: `firefox` can not start in full-screen even though I use `exec firefox 1920x1080+0+0` in `/etc/X11/xinit/xinitrc`.
 
-When I delete `video=1920x1080`, then `grub-mkconfig -o /boot/grub/grub.cfg`, things works well again.
+  When I delete `video=1920x1080`, then `grub-mkconfig -o /boot/grub/grub.cfg`, things works well again.
