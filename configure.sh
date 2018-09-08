@@ -120,7 +120,7 @@ install_font() {
 }
 
 install_necessary_packages() {
-	local PACKAGES='vim zsh zsh-completions git xorg-server xorg-xinit xorg-apps gnome-terminal firefox tmux i3'
+	local PACKAGES='vim zsh zsh-completions git xorg-server xorg-xinit xorg-apps gnome-terminal firefox tmux'
 	pacman -Syu $PACKAGES
 
 	install_yaourt
