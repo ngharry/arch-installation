@@ -26,7 +26,7 @@
 # Usage: 
 # UEFI: make_partion gpt 'ESP fat32' 1 512 $SWAP_SIZE
 # BIOS: make_partion msdos 'primary ext4' 3 $HOME_SIZE $SWAP_SIZE
-make_partion() {
+partion_disks() {
 	# label for partions
 	local PARTION_LABEL=$1
 
@@ -53,7 +53,7 @@ make_partion() {
 # Usage:
 # UEFI: format_partion 'mkfs.fat -F32'
 # BIOS: format_partion mkfs.ext4
-format_partion() {
+format_partions() {
 	local FS_TYPE=$1
 
 	$FS_TYPE /dev/sda1
@@ -84,20 +84,7 @@ unmount_fs() {
 	umount /mnt
 }
 
-install_base() {
-	# set mirror
-	echo 'Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch' \
-	>> /etc/pacman.d/mirrorlist
-	
-	# install base and base for developers 
-	pacstrap /mnt base base-devel
-}
-
-generate_fstab() {
-	genfstab -U /mnt >> /mnt/etc/fstab
-}
-
-change_root() {
+chroot_to_configuration() {
 	local execute_script=$1
 
 	# Provide privilege for execute_script
@@ -107,16 +94,16 @@ change_root() {
 	arch-chroot /mnt ./$execute_script
 }
 
-setup() {
+pre_install() {
 	echo "Disk partioning..."
 	read -p "How much disk space do you want for swap? " SWAP_SIZE
 
 	if [ -d /sys/firmware/efi ]; then
-		make_partion gpt 'ESP fat32' 1 512 $SWAP_SIZE
+		partion_disks gpt 'ESP fat32' 1 512 $SWAP_SIZE
 		echo "Finished partioning."
 
 		echo "Making file system..."
-		format_partion 'mkfs.fat -F32'
+		format_partions 'mkfs.fat -F32'
 		echo "Finished making file system."
 
 		echo "Mounting file system..."
@@ -124,41 +111,54 @@ setup() {
 		echo "Finished mounting file system."
 	else
 		read -p "How much disk space do you want for /home? " HOME_SIZE
-		make_partion msdos 'primary ext4' 3 $HOME_SIZE $SWAP_SIZE
+		partion_disks msdos 'primary ext4' 3 $HOME_SIZE $SWAP_SIZE
 
 		echo "Making file system..."
-		format_partion mkfs.ext4
+		format_partions mkfs.ext4
 		echo "Finished making file system."
 
 		echo "Mounting file system..."
 		mount_fs /mnt/home
 		echo "Finished mounting file system."
 	fi
+}
 
+install_base() {
+	# set mirror
+	echo 'Server = http://mirrors.kernel.org/archlinux/$repo/os/$arch' \
+	>> /etc/pacman.d/mirrorlist
+
+	# install base and base for developers 	
 	echo "Installing base and base devel..."
-	install_base
-	echo "Finished."
-
-	echo "Generating file system table..."
-	generate_fstab
+	pacstrap /mnt base base-devel
 	echo "Finished."
 }
 
-main() {
-	# configure file (execute during chroot)
-	local CONF_NAME=configure.sh
+configure() {
+	echo "Generating file system table..."
+	genfstab -U /mnt >> /mnt/etc/fstab
+	echo "Finished."
+
+	local CONF_NAME=$1
 
 	# change branch when downloading configure.sh from github
-	local BRANCH=master
+	local BRANCH=redesign
+
 	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/$BRANCH/$CONF_NAME
-	
-	setup
 
 	# Download configure.sh for configuring system
 	curl $configure_sh_link > /mnt/$CONF_NAME
 
 	# Execute configure.sh during change root
-	change_root $CONF_NAME
+	chroot_to_configuration $CONF_NAME
+}
+
+main() {
+	local CONF_NAME=configure.sh
+
+	pre_install
+	install_base
+	configure $CONF_NAME
 
 	# Check if failed or not during chroot
 	# if succeed, /mnt/$CONF_NAME would not exist.
