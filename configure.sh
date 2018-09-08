@@ -112,17 +112,15 @@ EOF
 }
 
 install_font() {
-	# Automatically pass input to install fonts
-
-	# Install first font yaourt found (Abode Source Code)
-	echo "1
-	y" | yaourt font
-
-	pacman -Sy ttf-hack
+	git clone https://github.com/powerline/fonts.git --depth=1
+	cd fonts
+	sudo ./install.sh
+	cd ..
+	rm -rf fonts
 }
 
 install_necessary_packages() {
-	local PACKAGES='vim zsh zsh-completions git xorg-server xorg-xinit xorg-apps'
+	local PACKAGES='vim zsh zsh-completions git xorg-server xorg-xinit xorg-apps gnome-terminal firefox tmux i3'
 	pacman -Syu $PACKAGES
 
 	install_yaourt
@@ -132,7 +130,6 @@ install_necessary_packages() {
 	# Configure network
 	pacman -S networkmanager && systemctl enable NetworkManager
 }
-
 
 install_bootloader() {
 	# If directory /sys/firmware.efi exists, then the system uses UEFI
