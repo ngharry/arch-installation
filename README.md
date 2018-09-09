@@ -111,6 +111,7 @@ If no error occurs, after finishing installation process, you can reboot your sy
 - [ ] Configure full screen tty console in Arch.
 - [x] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
 - [ ] Copy, paste, share clipboard from guest to host.
+- [ ] At the end of installation process, obviously, `rm configure.sh` is not working. Figure it out some time.
 
 ## Bug Reporting
 
