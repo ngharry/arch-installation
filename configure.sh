@@ -142,7 +142,7 @@ install_necessary_packages() {
 	PACKAGES+=' yaourt package-query'
 
 	# Network
-	PACKAGES+=' networkmanager ssh'
+	PACKAGES+=' networkmanager openssh'
 
 	configure_yaourt
 	configure_sublime
