@@ -16,9 +16,8 @@ This is a bash script used for automating Arch Linux installation process. *At t
   * Set root password.
   * Create users.
   * Install boot loader.
-  * Install vim, zsh, git, X server
+  * Install vim, zsh, git, X server, ssh
   * Install yaourt.
-  * Upgrade whole system.
 
 ## Prerequisites
 1. A virtual environment (VirtualBox, VmWare, etc.). I am testing this script using VirtualBox.

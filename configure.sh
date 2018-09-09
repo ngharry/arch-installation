@@ -52,7 +52,7 @@ set_hostname() {
 	echo $HOSTNAME > /etc/hostname
 }
 
-install_sublime() {
+configure_sublime() {
 	curl -O https://download.sublimetext.com/sublimehq-pub.gpg &&
 	sudo pacman-key --add sublimehq-pub.gpg && 
 	sudo pacman-key --lsign-key 8A8F901A && 
@@ -60,8 +60,6 @@ install_sublime() {
 
 	echo -e "\n[sublime-text]\nServer = https://download.sublimetext.com/arch/stable/x86_64" | 
 	sudo tee -a /etc/pacman.conf
-
-	sudo pacman -Syu sublime-text
 }
 
 # Manual Installation
@@ -77,7 +75,8 @@ install_sublime() {
 #   want trash packages appear in our system.
 #
 # Below is the automatic installation 
-install_yaourt() {
+
+configure_yaourt() {
 	# To avoid append the content multiple times
 
 	# Find if [arcolinux_repo_iso] is in /etc/pacman.conf
@@ -90,10 +89,10 @@ SigLevel = Never
 Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
 EOF
 	fi
+}
 
-	pacman -Sy
-	pacman -S yaourt package-query
-
+# Uncomment appended lines during configuring yaourt
+reset_pacman_configuration() {
 	# To comment out the appended lines above
 
 	# Find [arcolinux_repo_iso] again
@@ -111,24 +110,51 @@ EOF
 	fi
 }
 
+# Install powerline fonts
+# NOTE: THIS FUNCTION IS RUN UNDER ROOT PRIVILEGE. WHEN LOGIN AS USER,
+#       THESE FONTS ARE NOT INSTALLED. I DO NOT REMOVE `fonts` DIRECTORY
+#       BECAUSE I WANT TO REINSTALL THEM UNDER USER PRIVILEGE
 install_font() {
 	git clone https://github.com/powerline/fonts.git --depth=1
 	cd fonts
 	./install.sh
-	cd ..
-	rm -rf fonts
 }
 
 install_necessary_packages() {
-	local PACKAGES='vim zsh zsh-completions git xorg-server xorg-xinit xorg-apps gnome-terminal firefox tmux'
-	pacman -Syu $PACKAGES
+	local PACKAGES=''
 
-	install_yaourt
-	install_sublime
-	install_font
+	# Version control
+	PACKAGES+=' git'
+
+	# Web browser
+	PACKAGES+=' firefox'
+
+	# Text editor
+	PACKAGES+=' vim sublime-text'
+
+	# X display server
+	PACKAGES+=' xorg-server xorg-xinit xorg-apps'
+
+	# terminal utilities
+	PACKAGES+=' zsh zsh-completions gnome-terminal tmux'
+
+	# Yaourt
+	PACKAGES+=' yaourt package-query'
+
+	# Network
+	PACKAGES+=' networkmanager ssh'
+
+	configure_yaourt
+	configure_sublime
+
+	pacman -Syu $PACKAGES
+	
+	reset_pacman_configuration
 
 	# Configure network
-	pacman -S networkmanager && systemctl enable NetworkManager
+	systemctl enable NetworkManager
+	
+	install_font
 }
 
 install_bootloader() {
