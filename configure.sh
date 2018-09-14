@@ -144,6 +144,10 @@ install_necessary_packages() {
 	# Network
 	PACKAGES+=' networkmanager openssh'
 
+	# ONLY for Virtual Machine
+	# Comment these lines out if you are not using a virtual machine
+	PACKAGES+=' virtualbox-guest-utils'
+	
 	configure_yaourt
 	configure_sublime
 
@@ -257,8 +261,8 @@ main() {
 	echo "Preparing to install bootloader..."
 	install_bootloader
 
-	# echo "Installing necessary packages..."
-	# install_necessary_packages
+	echo "Installing necessary packages..."
+	install_necessary_packages
 	
 	# fix bug for virtualbox (UEFI only) 
     if [ -d /sys/firmware/efi ]; then
