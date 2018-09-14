@@ -286,7 +286,7 @@ main() {
 
 	# remove configure.sh in /mnt for indicates error in uefi_install.sh
 	# if configure.sh still exists then there must be errors somewhere
-	rm /mnt/configure.sh
+	rm /configure.sh
 	
 	exit
 }
