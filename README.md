@@ -16,7 +16,7 @@ This is a bash script used for automating Arch Linux installation process. *At t
   * Set root password.
   * Create users.
   * Install boot loader.
-  * Install vim, zsh, git, X server, ssh
+  * Install vim, zsh, git, X server, ssh, virtualbox guest utilities.
   * Install yaourt.
 
 ## Prerequisites
@@ -107,11 +107,17 @@ If no error occurs, after finishing installation process, you can reboot your sy
 - [x] Install Sublime Text.
 - [x] Install necessary packages (web browser, git, etc.).
 - [x] Install fonts (Adobe Source Code, Hack).
-- [ ] Allow user to choose between different Desktop Environment (GNOME, KDE, Deepin, Unity,...).
 - [ ] Configure full screen tty console in Arch.
 - [x] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
-- [ ] Copy, paste, share clipboard from guest to host.
-- [ ] At the end of installation process, obviously, `rm configure.sh` is not working. Figure it out some time.
+- [x] Copy, paste, share clipboard from guest to host.
+  
+  References: 
+
+  [Arch Wiki: Installation steps for Arch Linux guest](https://wiki.archlinux.org/index.php/VirtualBox#Installation_steps_for_Arch_Linux_guests)
+
+  [My Arch Linux Configuration](https://gist.github.com/harrynguyen97/9a884f751da106573bd14ff3fb41f5f7)
+
+- [x] At the end of installation process, obviously, `rm configure.sh` is not working. Figure it out some time. (Silly mistake: the directory which the script is working on is /, the remove command should be `rm /configure.sh` instead of `rm configure.sh`.) 
 
 ## Bug Reporting
 
