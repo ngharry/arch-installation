@@ -147,7 +147,7 @@ install_necessary_packages() {
 	# ONLY for Virtual Machine
 	# Comment these lines out if you are not using a virtual machine
 	PACKAGES+=' virtualbox-guest-utils'
-	
+
 	configure_yaourt
 	configure_sublime
 
@@ -286,7 +286,7 @@ main() {
 
 	# remove configure.sh in /mnt for indicates error in uefi_install.sh
 	# if configure.sh still exists then there must be errors somewhere
-	rm configure.sh
+	rm /mnt/configure.sh
 	
 	exit
 }
