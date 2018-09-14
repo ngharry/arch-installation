@@ -257,8 +257,8 @@ main() {
 	echo "Preparing to install bootloader..."
 	install_bootloader
 
-	echo "Installing necessary packages..."
-	install_necessary_packages
+	# echo "Installing necessary packages..."
+	# install_necessary_packages
 	
 	# fix bug for virtualbox (UEFI only) 
     if [ -d /sys/firmware/efi ]; then
