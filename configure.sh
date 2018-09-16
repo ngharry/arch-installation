@@ -136,7 +136,7 @@ install_necessary_packages() {
 	PACKAGES+=' xorg-server xorg-xinit xorg-apps'
 
 	# terminal utilities
-	PACKAGES+=' zsh zsh-completions gnome-terminal tmux'
+	PACKAGES+=' zsh zsh-completions gnome-terminal tmux neofetch'
 
 	# Yaourt
 	PACKAGES+=' yaourt package-query'
