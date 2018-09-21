@@ -99,7 +99,7 @@ If no error occurs, after finishing installation process, you can reboot your sy
 ## UEFI Only
 **[IMPORTANT]** After rebooting and playing around with your new system, shutdown and **REMEMBER to remove disk from Virtual Drive** under Settings > Storage > Attributes, click the disk icon next to `Optical Drive:` and choose `Remove Disk from Virtual Drive`. If you do not do this, next time the system will boot to live CD again.
 
-## TODO List
+## TODO
 - [x] Install yaourt.
 - [x] Allow both BIOS and UEFI to run this script.
 - [x] Ask if user want to create user or not.
@@ -110,13 +110,6 @@ If no error occurs, after finishing installation process, you can reboot your sy
 - [ ] Configure full screen tty console in Arch.
 - [x] Figure out why Arch does not work after installing KDE/SDDM and Deepin/lightdm.
 - [x] Copy, paste, share clipboard from guest to host.
-  
-  References: 
-
-  [Arch Wiki: Installation steps for Arch Linux guest](https://wiki.archlinux.org/index.php/VirtualBox#Installation_steps_for_Arch_Linux_guests)
-
-  [My Arch Linux Configuration](https://gist.github.com/harrynguyen97/9a884f751da106573bd14ff3fb41f5f7)
-
 - [x] At the end of installation process, obviously, `rm configure.sh` is not working. Figure it out some time. (Silly mistake: the directory which the script is working on is /, the remove command should be `rm /configure.sh` instead of `rm configure.sh`.) 
 
 ## Bug Reporting
@@ -162,3 +155,9 @@ If no error occurs, after finishing installation process, you can reboot your sy
   I managed to set TTY to full screen by modify `/etc/default/grub` and change `GRUB_CMDLINE_LINUX_DEFAULT="quiet"` to `GRUB_CMDLINE_LINUX_DEFAULT="quiet video=1920x1080"` and then `grub-mkconfig -o /boot/grub/grub.cfg`. However, when I try to launch application without DE, it seems to have some problems with X server. Eg: `firefox` can not start in full-screen even though I use `exec firefox 1920x1080+0+0` in `/etc/X11/xinit/xinitrc`.
 
   When I delete `video=1920x1080`, then `grub-mkconfig -o /boot/grub/grub.cfg`, things works well again.
+
+## References
+
+[Arch Linux Wiki](https://wiki.archlinux.org/)
+
+See also: [My Arch Linux Configuration](https://gist.github.com/harrynguyen97/9a884f751da106573bd14ff3fb41f5f7)
