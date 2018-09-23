@@ -127,7 +127,7 @@ install_necessary_packages() {
 	PACKAGES+=' git'
 
 	# Development tools
-	PACKAGES+=' gdb'
+	PACKAGES+=' gdb valgrind'
 
 	# Web browser
 	PACKAGES+=' firefox'
