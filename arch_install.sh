@@ -144,7 +144,7 @@ configure() {
 	# change branch when downloading configure.sh from github
 	local BRANCH=redesign
 
-	local configure_sh_link=https://raw.githubusercontent.com/harrynguyen97/arch-installation/$BRANCH/$CONF_NAME
+	local configure_sh_link=https://raw.githubusercontent.com/ngharry/arch-installation/$BRANCH/$CONF_NAME
 
 	# Download configure.sh for configuring system
 	curl $configure_sh_link > /mnt/$CONF_NAME
