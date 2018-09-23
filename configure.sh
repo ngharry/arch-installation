@@ -126,6 +126,9 @@ install_necessary_packages() {
 	# Version control
 	PACKAGES+=' git'
 
+	# Development tools
+	PACKAGES+=' gdb'
+
 	# Web browser
 	PACKAGES+=' firefox'
 
