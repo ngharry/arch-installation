@@ -160,4 +160,4 @@ If no error occurs, after finishing installation process, you can reboot your sy
 
 [Arch Linux Wiki](https://wiki.archlinux.org/)
 
-See also: [My Arch Linux Configuration](https://gist.github.com/harrynguyen97/9a884f751da106573bd14ff3fb41f5f7)
+See also: [My Arch Linux Configuration](https://gist.github.com/ngharry/9a884f751da106573bd14ff3fb41f5f7)
