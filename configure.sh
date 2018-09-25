@@ -268,7 +268,7 @@ main() {
 	install_necessary_packages
 	
 	# fix bug for virtualbox (UEFI only) 
-    if [ -d /sys/firmware/efi ]; then
+	if [ -d /sys/firmware/efi ]; then
 		echo "Fixing bug for virtualbox..."
 		virtualbox_bug_patch
 		echo "Finished."
