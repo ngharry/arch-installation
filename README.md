@@ -32,7 +32,7 @@ This is a bash script used for automating Arch Linux installation process. *At t
 Download `arch_install.sh` to the live Arch Linux environment:
 
 ```
-curl -O https://raw.githubusercontent.com/harrynguyen97/arch-installation/master/arch_install.sh
+curl -O https://raw.githubusercontent.com/ngharry/arch-installation/master/arch_install.sh
 ```
 
 Set execute permission for `arch_install.sh`:
