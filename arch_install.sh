@@ -142,7 +142,7 @@ configure() {
 	local CONF_NAME=$1
 
 	# change branch when downloading configure.sh from github
-	local BRANCH=redesign
+	local BRANCH=master
 
 	local configure_sh_link=https://raw.githubusercontent.com/ngharry/arch-installation/$BRANCH/$CONF_NAME
 
