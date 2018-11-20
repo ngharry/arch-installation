@@ -142,7 +142,7 @@ install_necessary_packages() {
 	PACKAGES+=' zsh zsh-completions gnome-terminal tmux neofetch'
 
 	# Yaourt
-	PACKAGES+=' yaourt package-query'
+	# PACKAGES+=' yaourt package-query'
 
 	# Network
 	PACKAGES+=' networkmanager openssh'
