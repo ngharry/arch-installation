@@ -62,54 +62,6 @@ configure_sublime() {
 	sudo tee -a /etc/pacman.conf
 }
 
-# Manual Installation
-# - Open /etc/pacman.conf
-# - Append 
-#   >[arcolinux_repo_iso]
-#   >SigLevel = Never
-#   >Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
-#   to the end of /etc/pacman.conf
-# - Update system `pacman -Sy`
-# - Install yaourt and package-query `pacman -S yaourt package-query`
-# - After finish installation, comment out those appended lines above. We dont
-#   want trash packages appear in our system.
-#
-# Below is the automatic installation 
-
-configure_yaourt() {
-	# To avoid append the content multiple times
-
-	# Find if [arcolinux_repo_iso] is in /etc/pacman.conf
-	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
-	# if not found, then append the content below to /etc/pacman.conf
-	if [ $? -ne 0 ]; then
-		cat >> /etc/pacman.conf <<"EOF"
-[arcolinux_repo_iso]
-SigLevel = Never
-Server = https://arcolinux.github.io/arcolinux_repo_iso/$arch
-EOF
-	fi
-}
-
-# Uncomment appended lines during configuring yaourt
-reset_pacman_configuration() {
-	# To comment out the appended lines above
-
-	# Find [arcolinux_repo_iso] again
-	grep -Fxq "[arcolinux_repo_iso]" /etc/pacman.conf
-	# If found, then comment out the appended lines above
-	if [ $? -eq 0 ]; then
-		# Get total number of lines in /etc/pacman.conf
-		local NUMLINES=$(wc -l < /etc/pacman.conf)
-
-		# This command means replace any empty character by # from 
-		# line NUMLINES - 2 to the end of file.
-		#
-		# Also means comment out the last 3 lines of /etc/pacman.conf
-		sed -i "$(($NUMLINES-2)),\$s/^/#/" /etc/pacman.conf
-	fi
-}
-
 # Install powerline fonts
 # NOTE: THIS FUNCTION IS RUN UNDER ROOT PRIVILEGE. WHEN LOGIN AS USER,
 #       THESE FONTS ARE NOT INSTALLED. I DO NOT REMOVE `fonts` DIRECTORY
@@ -141,9 +93,6 @@ install_necessary_packages() {
 	# terminal utilities
 	PACKAGES+=' zsh zsh-completions gnome-terminal tmux neofetch'
 
-	# Yaourt
-	# PACKAGES+=' yaourt package-query'
-
 	# Network
 	PACKAGES+=' networkmanager openssh'
 
@@ -151,12 +100,9 @@ install_necessary_packages() {
 	# Comment these lines out if you are not using a virtual machine
 	PACKAGES+=' virtualbox-guest-utils'
 
-	configure_yaourt
 	configure_sublime
 
 	pacman -Syu $PACKAGES
-	
-	reset_pacman_configuration
 
 	# Configure network
 	systemctl enable NetworkManager
