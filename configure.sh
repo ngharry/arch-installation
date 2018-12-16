@@ -72,6 +72,17 @@ install_font() {
 	./install.sh
 }
 
+install_yaourt() {
+	cd /tmp 
+	git clone https://aur.archlinux.org/package-query.git
+	cd package-query
+	makepkg -si
+	cd ..
+	git clone https://aur.archlinux.org/yaourt.git
+	cd yaourt/
+	makepkg -si
+}
+
 install_necessary_packages() {
 	local PACKAGES=''
 
@@ -91,7 +102,10 @@ install_necessary_packages() {
 	PACKAGES+=' xorg-server xorg-xinit xorg-apps'
 
 	# terminal utilities
-	PACKAGES+=' zsh zsh-completions gnome-terminal tmux neofetch'
+	PACKAGES+=' zsh zsh-completions deepin-terminal tmux neofetch'
+
+	# Monitor 
+	PACKAGES+=' gtop'
 
 	# Network
 	PACKAGES+=' networkmanager openssh'
@@ -107,6 +121,7 @@ install_necessary_packages() {
 	# Configure network
 	systemctl enable NetworkManager
 	
+	install_yaourt
 	install_font
 }
 
