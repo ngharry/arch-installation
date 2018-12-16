@@ -72,17 +72,6 @@ install_font() {
 	./install.sh
 }
 
-install_yaourt() {
-	cd /tmp 
-	git clone https://aur.archlinux.org/package-query.git
-	cd package-query
-	makepkg -si
-	cd ..
-	git clone https://aur.archlinux.org/yaourt.git
-	cd yaourt/
-	makepkg -si
-}
-
 install_necessary_packages() {
 	local PACKAGES=''
 
@@ -104,8 +93,8 @@ install_necessary_packages() {
 	# terminal utilities
 	PACKAGES+=' zsh zsh-completions deepin-terminal tmux neofetch'
 
-	# Monitor 
-	PACKAGES+=' gtop'
+	# Other utilities
+	PACKAGES+=' gtop feh unzip'
 
 	# Network
 	PACKAGES+=' networkmanager openssh'
